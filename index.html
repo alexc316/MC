@@ -65,21 +65,31 @@
     display: none;
   }
 
+  .buttons {
+    margin-top: 20px;
+  }
+
   button {
-    margin-top: 25px;
+    margin: 8px;
     background: #c8102e;
     color: #fff;
     border: none;
-    padding: 12px 25px;
+    padding: 12px 20px;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: bold;
     transition: all 0.3s ease;
   }
 
   button:hover {
     background: #a50e24;
+  }
+
+  .progress {
+    margin-top: 15px;
+    font-size: 1rem;
+    color: #555;
   }
 
   footer {
@@ -99,21 +109,32 @@
 
 <main>
   <div class="card">
-    <div id="question" class="question">Cargando pregunta...</div>
+    <div id="question" class="question">Presiona "Iniciar" para comenzar</div>
     <div id="answer" class="answer"></div>
-    <button id="nextBtn">Mostrar siguiente</button>
+    <div class="buttons">
+      <button id="startBtn">Iniciar</button>
+      <button id="showBtn" style="display:none;">Mostrar respuesta</button>
+      <button id="nextBtn" style="display:none;">Siguiente</button>
+      <button id="restartBtn" style="display:none;">Reiniciar</button>
+    </div>
+    <div id="progress" class="progress"></div>
   </div>
 </main>
 
 <footer>
-  © 2025 McLearning | Proyecto de Entrenamiento MC 🍟
+  © 2025 Mc creador empleado 156372 Alexis Calderon | Proyecto de Entrenamiento MC 🍟
 </footer>
 
 <script>
-  // URL RAW del CSV (con mayúsculas correctas)
   const csvUrl = "https://raw.githubusercontent.com/alexc316/MC/main/Guia_de_entrenamiento_MC.csv";
   let data = [];
   let currentIndex = 0;
+  let randomizedData = [];
+
+  // Mezclar array
+  function shuffle(array) {
+    return array.sort(() => Math.random() - 0.5);
+  }
 
   async function loadCSV() {
     try {
@@ -121,45 +142,68 @@
       const text = await response.text();
 
       const cleanText = text.replace(/^\uFEFF/, '').trim();
-
-      // Detecta delimitador (coma o punto y coma)
       const delimiter = cleanText.includes(";") ? ";" : ",";
 
       const rows = cleanText.split(/\r?\n/).map(line =>
         line.split(new RegExp(`${delimiter}(?=(?:(?:[^"]*"){2})*[^"]*$)`)).map(cell => cell.replace(/(^"|"$)/g, ''))
       );
 
-      data = rows.slice(1); // omite encabezado
+      data = rows.slice(1);
 
       if (data.length === 0) throw new Error("El CSV está vacío o mal formateado.");
 
       console.log("✅ Preguntas cargadas:", data.length);
-      console.log("Ejemplo de datos:", data.slice(0,5));
-
-      showQuestion();
     } catch (err) {
       document.getElementById("question").innerText = "❌ Error al cargar las preguntas. Verifica el CSV.";
       console.error("Error cargando CSV:", err);
     }
   }
 
+  function startQuiz() {
+    randomizedData = shuffle([...data]);
+    currentIndex = 0;
+    document.getElementById("startBtn").style.display = "none";
+    document.getElementById("showBtn").style.display = "inline-block";
+    document.getElementById("nextBtn").style.display = "inline-block";
+    document.getElementById("restartBtn").style.display = "none";
+    showQuestion();
+  }
+
   function showQuestion() {
-    if (data.length === 0) return;
-    const [pregunta, respuesta] = data[currentIndex];
+    if (currentIndex >= randomizedData.length) {
+      document.getElementById("question").innerText = "🎉 ¡Has terminado todas las preguntas!";
+      document.getElementById("answer").style.display = "none";
+      document.getElementById("showBtn").style.display = "none";
+      document.getElementById("nextBtn").style.display = "none";
+      document.getElementById("restartBtn").style.display = "inline-block";
+      document.getElementById("progress").innerText = "";
+      return;
+    }
+
+    const [pregunta, respuesta] = randomizedData[currentIndex];
     document.getElementById("question").innerText = pregunta || "Sin pregunta";
     const answerDiv = document.getElementById("answer");
     answerDiv.innerText = respuesta || "Sin respuesta";
     answerDiv.style.display = "none";
+
+    document.getElementById("progress").innerText = `Pregunta ${currentIndex + 1} de ${randomizedData.length}`;
   }
 
+  document.getElementById("showBtn").addEventListener("click", () => {
+    document.getElementById("answer").style.display = "block";
+  });
+
   document.getElementById("nextBtn").addEventListener("click", () => {
-    const answerDiv = document.getElementById("answer");
-    answerDiv.style.display = "block";
-    setTimeout(() => {
-      answerDiv.style.display = "none";
-      currentIndex = (currentIndex + 1) % data.length;
-      showQuestion();
-    }, 20000); // 20 segundos
+    currentIndex++;
+    showQuestion();
+  });
+
+  document.getElementById("restartBtn").addEventListener("click", () => {
+    startQuiz();
+  });
+
+  document.getElementById("startBtn").addEventListener("click", () => {
+    startQuiz();
   });
 
   loadCSV();
