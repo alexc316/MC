@@ -110,7 +110,8 @@
 </footer>
 
 <script>
-  const csvUrl = "https://raw.githubusercontent.com/alexc316/MC/main/Guia_entrenamiento_mc.csv";
+  // URL RAW del CSV (con mayúsculas correctas)
+  const csvUrl = "https://raw.githubusercontent.com/alexc316/MC/main/Guia_de_entrenamiento_MC.csv";
   let data = [];
   let currentIndex = 0;
 
@@ -119,18 +120,26 @@
       const response = await fetch(csvUrl);
       const text = await response.text();
 
-      // Limpieza de caracteres ocultos y comillas
       const cleanText = text.replace(/^\uFEFF/, '').trim();
-      const rows = cleanText.split(/\r?\n/).map(line => line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(cell => cell.replace(/(^"|"$)/g, '')));
+
+      // Detecta delimitador (coma o punto y coma)
+      const delimiter = cleanText.includes(";") ? ";" : ",";
+
+      const rows = cleanText.split(/\r?\n/).map(line =>
+        line.split(new RegExp(`${delimiter}(?=(?:(?:[^"]*"){2})*[^"]*$)`)).map(cell => cell.replace(/(^"|"$)/g, ''))
+      );
 
       data = rows.slice(1); // omite encabezado
 
       if (data.length === 0) throw new Error("El CSV está vacío o mal formateado.");
 
+      console.log("✅ Preguntas cargadas:", data.length);
+      console.log("Ejemplo de datos:", data.slice(0,5));
+
       showQuestion();
     } catch (err) {
-      document.getElementById("question").innerText = "❌ Error al cargar las preguntas. Verifica el nombre del archivo CSV.";
-      console.error(err);
+      document.getElementById("question").innerText = "❌ Error al cargar las preguntas. Verifica el CSV.";
+      console.error("Error cargando CSV:", err);
     }
   }
 
@@ -158,5 +167,3 @@
 
 </body>
 </html>
-
-
