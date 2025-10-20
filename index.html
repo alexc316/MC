@@ -1,99 +1,113 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Entrenamiento MC</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía de estudio a entrenador MC</title>
 <style>
   body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
-    background: url('https://png.pngtree.com/thumb_back/fh260/background/20210902/pngtree-fast-food-hamburger-background-image_787622.jpg') no-repeat center center fixed;
-    background-size: cover;
-    color: white;
+    background: linear-gradient(to bottom right, #fffdf5, #fff);
+    color: #222;
     text-align: center;
   }
 
-  .overlay {
-    background: rgba(0, 0, 0, 0.6);
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+  header {
+    background-color: #fff;
+    padding: 20px 0;
+    border-bottom: 4px solid #ffc107;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
   }
 
-  .container {
-    position: relative;
-    z-index: 2;
-    padding: 40px;
+  header img {
+    width: 90px;
+    vertical-align: middle;
   }
 
-  img.logo {
-    width: 120px;
-    margin-bottom: 20px;
+  header h1 {
+    display: inline-block;
+    margin-left: 10px;
+    color: #c8102e;
+    font-size: 1.8rem;
+    vertical-align: middle;
   }
 
-  h1 {
-    font-size: 2.5rem;
-    color: #FFD700;
+  main {
+    padding: 40px 20px;
   }
 
   .card {
-    background: rgba(255, 0, 0, 0.9);
+    background: #ffffff;
     border-radius: 20px;
     display: inline-block;
     padding: 30px;
-    color: #fff;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    width: 80%;
-    max-width: 500px;
-    margin-top: 30px;
+    width: 90%;
+    max-width: 550px;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+    border-top: 6px solid #ffcc00;
   }
 
   .question {
     font-size: 1.3rem;
-    font-weight: bold;
+    font-weight: 600;
+    color: #c8102e;
   }
 
   .answer {
-    margin-top: 20px;
+    margin-top: 25px;
     font-size: 1.1rem;
-    background: #fff;
-    color: #c00;
+    background: #fff4e6;
+    color: #333;
     padding: 15px;
+    border-left: 5px solid #ffcc00;
     border-radius: 10px;
     display: none;
   }
 
   button {
     margin-top: 25px;
-    background: #FFD700;
-    color: #c00;
+    background: #c8102e;
+    color: #fff;
     border: none;
     padding: 12px 25px;
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 1.1rem;
     font-weight: bold;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
   }
 
   button:hover {
-    background: white;
+    background: #a50e24;
+  }
+
+  footer {
+    margin-top: 50px;
+    padding: 10px;
+    font-size: 0.9rem;
+    color: #555;
   }
 </style>
 </head>
 <body>
-<div class="overlay"></div>
-<div class="container">
-  <img src="https://th.bing.com/th/id/R.466663e3e2b9cdbe29c5d4e0721ea9b7?rik=y%2b93vLaQvfidzg&riu=http%3a%2f%2fpngimg.com%2fuploads%2fmcdonalds%2fmcdonalds_PNG9.png&ehk=EcWIjy9En23IUg5CDObkhF0leLXrlb95DXKIAb%2fMM50%3d&risl=&pid=ImgRaw&r=0" alt="McDonald's Logo" class="logo" />
-  <h1>Guía de Entrenamiento MC</h1>
 
+<header>
+  <img src="https://th.bing.com/th/id/R.466663e3e2b9cdbe29c5d4e0721ea9b7?rik=y%2b93vLaQvfidzg&riu=http%3a%2f%2fpngimg.com%2fuploads%2fmcdonalds%2fmcdonalds_PNG9.png&ehk=EcWIjy9En23IUg5CDObkhF0leLXrlb95DXKIAb%2fMM50%3d&risl=&pid=ImgRaw&r=0" alt="McDonald's Logo">
+  <h1>Guía de estudio a entrenador MC</h1>
+</header>
+
+<main>
   <div class="card">
     <div id="question" class="question">Cargando pregunta...</div>
     <div id="answer" class="answer"></div>
     <button id="nextBtn">Mostrar siguiente</button>
   </div>
-</div>
+</main>
+
+<footer>
+  © 2025 McLearning | Proyecto de Entrenamiento MC 🍟
+</footer>
 
 <script>
   const csvUrl = "https://raw.githubusercontent.com/alexc316/MC/main/Guia%20de%20entrenamiento%20MC.csv";
@@ -104,20 +118,28 @@
     try {
       const response = await fetch(csvUrl);
       const text = await response.text();
-      const rows = text.split("\n").map(r => r.split(","));
-      data = rows.slice(1); // omitir encabezado
+
+      // Limpieza de caracteres ocultos y comillas
+      const cleanText = text.replace(/^\uFEFF/, '').trim();
+      const rows = cleanText.split(/\r?\n/).map(line => line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(cell => cell.replace(/(^"|"$)/g, '')));
+
+      data = rows.slice(1); // omite encabezado
+
+      if (data.length === 0) throw new Error("El CSV está vacío o mal formateado.");
+
       showQuestion();
     } catch (err) {
-      document.getElementById("question").innerText = "Error al cargar las preguntas.";
+      document.getElementById("question").innerText = "❌ Error al cargar las preguntas. Verifica el nombre del archivo CSV.";
+      console.error(err);
     }
   }
 
   function showQuestion() {
     if (data.length === 0) return;
     const [pregunta, respuesta] = data[currentIndex];
-    document.getElementById("question").innerText = pregunta;
+    document.getElementById("question").innerText = pregunta || "Sin pregunta";
     const answerDiv = document.getElementById("answer");
-    answerDiv.innerText = respuesta;
+    answerDiv.innerText = respuesta || "Sin respuesta";
     answerDiv.style.display = "none";
   }
 
@@ -133,5 +155,6 @@
 
   loadCSV();
 </script>
+
 </body>
 </html>
