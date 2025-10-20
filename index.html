@@ -1,191 +1,137 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Study Buddy 🍟 McDonald's Edition</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Entrenamiento MC</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: url('https://png.pngtree.com/thumb_back/fh260/background/20210902/pngtree-fast-food-hamburger-background-image_787622.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: white;
+    text-align: center;
+  }
 
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+  .overlay {
+    background: rgba(0, 0, 0, 0.6);
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+  }
 
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(180deg, #d61c1c 0%, #b91313 100%), url('https://wallpapers.com/images/hd/mcdonalds-burger-background-tgc2zv0t4w6m92sj.jpg');
-      background-size: cover;
-      background-attachment: fixed;
-      color: #fff;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
+  .container {
+    position: relative;
+    z-index: 2;
+    padding: 40px;
+  }
 
-    header {
-      padding: 20px;
-      background-color: rgba(255, 204, 0, 0.9);
-      color: #d61c1c;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      font-weight: bold;
-      font-size: 24px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    }
+  img.logo {
+    width: 120px;
+    margin-bottom: 20px;
+  }
 
-    header img {
-      height: 50px;
-    }
+  h1 {
+    font-size: 2.5rem;
+    color: #FFD700;
+  }
 
-    .card {
-      background-color: rgba(255, 255, 255, 0.95);
-      color: #222;
-      margin: 60px auto;
-      width: 90%;
-      max-width: 600px;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-      transition: all 0.3s ease;
-    }
+  .card {
+    background: rgba(255, 0, 0, 0.9);
+    border-radius: 20px;
+    display: inline-block;
+    padding: 30px;
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    width: 80%;
+    max-width: 500px;
+    margin-top: 30px;
+  }
 
-    .card h2 {
-      color: #d61c1c;
-    }
+  .question {
+    font-size: 1.3rem;
+    font-weight: bold;
+  }
 
-    input {
-      padding: 10px;
-      width: 80%;
-      border-radius: 10px;
-      border: 2px solid #d61c1c;
-      margin-top: 10px;
-      font-size: 16px;
-    }
+  .answer {
+    margin-top: 20px;
+    font-size: 1.1rem;
+    background: #fff;
+    color: #c00;
+    padding: 15px;
+    border-radius: 10px;
+    display: none;
+  }
 
-    button {
-      background-color: #ffc300;
-      color: #b91313;
-      border: none;
-      padding: 12px 25px;
-      border-radius: 25px;
-      margin-top: 20px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
+  button {
+    margin-top: 25px;
+    background: #FFD700;
+    color: #c00;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: all 0.3s;
+  }
 
-    button:hover {
-      background-color: #ffdb4d;
-    }
-
-    .feedback {
-      font-weight: bold;
-      margin-top: 20px;
-      padding: 10px;
-      border-radius: 10px;
-    }
-
-    .correct {
-      background-color: #28a745;
-      color: white;
-    }
-
-    .incorrect {
-      background-color: #dc3545;
-      color: white;
-    }
-
-    footer {
-      margin-top: 50px;
-      padding: 20px;
-      background: rgba(0,0,0,0.6);
-      color: #fff;
-      font-size: 14px;
-    }
-  </style>
+  button:hover {
+    background: white;
+  }
+</style>
 </head>
-
 <body>
-  <header>
-    <img src="https://th.bing.com/th/id/R.466663e3e2b9cdbe29c5d4e0721ea9b7?rik=y%2b93vLaQvfidzg&riu=http%3a%2f%2fpngimg.com%2fuploads%2fmcdonalds%2fmcdonalds_PNG9.png&ehk=EcWIjy9En23IUg5CDObkhF0leLXrlb95DXKIAb%2fMM50%3d&risl=&pid=ImgRaw&r=0" alt="McDonald's Logo">
-    Study Buddy — McDonald's Edition
-  </header>
+<div class="overlay"></div>
+<div class="container">
+  <img src="https://th.bing.com/th/id/R.466663e3e2b9cdbe29c5d4e0721ea9b7?rik=y%2b93vLaQvfidzg&riu=http%3a%2f%2fpngimg.com%2fuploads%2fmcdonalds%2fmcdonalds_PNG9.png&ehk=EcWIjy9En23IUg5CDObkhF0leLXrlb95DXKIAb%2fMM50%3d&risl=&pid=ImgRaw&r=0" alt="McDonald's Logo" class="logo" />
+  <h1>Guía de Entrenamiento MC</h1>
 
-  <div class="card" id="quiz-card">
-    <h2>🍟 Cargando preguntas...</h2>
+  <div class="card">
+    <div id="question" class="question">Cargando pregunta...</div>
+    <div id="answer" class="answer"></div>
+    <button id="nextBtn">Mostrar siguiente</button>
   </div>
+</div>
 
-  <footer>
-    Hecho con ❤️ y papas fritas | Creador Empleado 156272 - 2025
-  </footer>
+<script>
+  const csvUrl = "https://raw.githubusercontent.com/alexc316/MC/main/Guia%20de%20entrenamiento%20MC.csv";
+  let data = [];
+  let currentIndex = 0;
 
-  <script>
-    const QUIZ_CARD = document.getElementById('quiz-card');
-    let questions = [];
-    let currentIndex = 0;
-
-    // Ruta del CSV en GitHub Pages
-    const CSV_URL = "https://alexcalderon123.github.io/MC/Guia%20de%20entrenamiento%20MC.csv"; // <-- Ajusta con tu usuario GitHub
-
-    async function loadCSV() {
-      const response = await fetch(CSV_URL);
+  async function loadCSV() {
+    try {
+      const response = await fetch(csvUrl);
       const text = await response.text();
-      const rows = text.trim().split('\n').map(r => r.split(','));
-      const headers = rows[0];
-      const data = rows.slice(1).map(r => {
-        const rowObj = {};
-        headers.forEach((h, i) => rowObj[h.trim()] = r[i] ? r[i].trim() : "");
-        return rowObj;
-      });
-      questions = data.map(r => ({
-        section: r['Seccion'] || r['Fuente'] || '',
-        question: r['Pregunta'] || r['Question'] || '',
-        answer: r['Respuesta'] || r['Answer'] || ''
-      }));
+      const rows = text.split("\n").map(r => r.split(","));
+      data = rows.slice(1); // omitir encabezado
       showQuestion();
+    } catch (err) {
+      document.getElementById("question").innerText = "Error al cargar las preguntas.";
     }
+  }
 
-    function showQuestion() {
-      if (currentIndex >= questions.length) {
-        QUIZ_CARD.innerHTML = `<h2>🎉 ¡Terminaste todas las preguntas!</h2><p>Buen trabajo 🍔</p>`;
-        return;
-      }
+  function showQuestion() {
+    if (data.length === 0) return;
+    const [pregunta, respuesta] = data[currentIndex];
+    document.getElementById("question").innerText = pregunta;
+    const answerDiv = document.getElementById("answer");
+    answerDiv.innerText = respuesta;
+    answerDiv.style.display = "none";
+  }
 
-      const q = questions[currentIndex];
-      QUIZ_CARD.innerHTML = `
-        <h2>${q.section ? "📘 " + q.section : ""}</h2>
-        <p><strong>Pregunta ${currentIndex + 1}:</strong> ${q.question}</p>
-        <input id="answerInput" type="text" placeholder="Tu respuesta aquí">
-        <br>
-        <button onclick="checkAnswer()">Responder</button>
-        <div id="feedback"></div>
-      `;
-    }
+  document.getElementById("nextBtn").addEventListener("click", () => {
+    const answerDiv = document.getElementById("answer");
+    answerDiv.style.display = "block";
+    setTimeout(() => {
+      answerDiv.style.display = "none";
+      currentIndex = (currentIndex + 1) % data.length;
+      showQuestion();
+    }, 20000); // 20 segundos
+  });
 
-    function checkAnswer() {
-      const input = document.getElementById('answerInput').value.trim().toLowerCase();
-      const correct = questions[currentIndex].answer.trim().toLowerCase();
-      const feedback = document.getElementById('feedback');
-
-      if (!input) {
-        feedback.innerHTML = `<div class='feedback incorrect'>❗ Escribe una respuesta antes de continuar.</div>`;
-        return;
-      }
-
-      if (input === correct) {
-        feedback.innerHTML = `<div class='feedback correct'>✅ ¡Correcto! Respuesta: ${questions[currentIndex].answer}</div>`;
-      } else {
-        feedback.innerHTML = `<div class='feedback incorrect'>❌ Incorrecto. Respuesta correcta: ${questions[currentIndex].answer}</div>`;
-      }
-
-      // Espera 20 segundos y pasa a la siguiente
-      setTimeout(() => {
-        currentIndex++;
-        showQuestion();
-      }, 20000);
-    }
-
-    loadCSV();
-  </script>
+  loadCSV();
+</script>
 </body>
 </html>
