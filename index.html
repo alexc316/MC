@@ -36,12 +36,53 @@
     text-align: left;
   }
 
+  /* Estilos específicos para las nuevas secciones */
+  #welcomeView, #creatorView {
+    text-align: center;
+  }
+  #welcomeView h2 { color: #c8102e; margin-bottom: 20px; }
+  #welcomeView input {
+    width: 80%;
+    max-width: 300px;
+    padding: 12px;
+    margin: 10px auto;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    font-size: 1rem;
+    text-align: center;
+    display: block;
+  }
+
+  /* Estilo para el log del creador */
+  #logList {
+      list-style: none;
+      padding: 0;
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin-top: 20px;
+  }
+  #logList li {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+  }
+  #logList li:last-child {
+      border-bottom: none;
+  }
+  .log-name { font-weight: 600; color: #c8102e; }
+  .log-time { font-size: 0.9em; color: #555; }
+  .log-puesto { font-size: 0.8em; color: #777; }
+
+
+  /* Estilos del quiz (ya existentes) */
   .meta { text-align:center; margin-bottom: 10px; color:#777; font-size: .95rem }
   .section { font-weight: 700; color:#c8102e; margin-bottom: 8px; text-align:center; }
   .question { font-size: 1.2rem; font-weight: 600; color: #222; margin: 12px 0; text-align:center; }
-
   .sourceLine { text-align:center; color:#555; font-size:.9rem; margin-bottom:10px; }
-
   #userAnswer {
     width: calc(100% - 30px);
     padding: 12px;
@@ -51,11 +92,9 @@
     border:2px solid #ddd;
     font-size:1rem;
   }
-
   .feedback { margin-top: 16px; padding: 14px; border-radius:10px; display:none; white-space:pre-wrap; }
   .correct { background:#e6ffed; color:#2e7d32; border-left:5px solid #2e7d32; }
   .incorrect { background:#ffe6e6; color:#b71c1c; border-left:5px solid #b71c1c; }
-
   .buttons { text-align:center; margin-top:16px; }
   button {
     margin: 8px;
@@ -71,9 +110,7 @@
   button.secondary { background:#555; }
   button.warning { background:#ffcc00; color:#222; }
   button:hover { filter:brightness(.95); }
-
   .progress { text-align:center; margin-top:10px; color:#555; font-size:.95rem; }
-
   footer { margin-top:30px; padding: 10px; font-size: 0.9rem; color: #555; text-align:center;}
 </style>
 </head>
@@ -86,24 +123,45 @@
 
 <main>
   <div class="card">
-    <div class="meta">AutoMac</div>
-    <div id="section" class="section">Presiona "Iniciar" para comenzar</div>
-    <div id="question" class="question"></div>
-    <div id="sourceLine" class="sourceLine"></div>
-
-    <input id="userAnswer" type="text" placeholder="Escribe tu respuesta aquí..." style="display:none;">
-
-    <div id="feedback" class="feedback"></div>
-
-    <div class="buttons">
-      <button id="startBtn">Iniciar</button>
-      <button id="checkBtn" style="display:none;">Comprobar</button>
-      <button id="nextBtn" style="display:none;">Siguiente</button>
-      <button id="finishBtn" class="warning" style="display:none;">Terminar</button>
-      <button id="restartBtn" class="secondary" style="display:none;">Reiniciar</button>
+    
+    <div id="welcomeView">
+        <h2>Bienvenido a la Guía de Estudio</h2>
+        <p>Por favor, ingresa tu número de empleado para comenzar:</p>
+        <input id="employeeNumber" type="number" placeholder="Ej: 156372" autofocus>
+        <button id="accessBtn">Acceder</button>
+        <p id="welcomeFeedback" style="color:red; margin-top:10px;"></p>
     </div>
 
-    <div id="progress" class="progress"></div>
+    <div id="creatorView" style="display:none;">
+        <h2>Panel de Creador (156372 - Alexis)</h2>
+        <p>Registro de Accesos de Usuarios (Local)</p>
+        <ul id="logList">
+            <li>No hay registros aún.</li>
+        </ul>
+        <button id="clearLogBtn" class="warning">Limpiar Registro (Solo tu navegador)</button>
+        <button id="backToQuizBtn" class="secondary">Volver al Quiz</button>
+    </div>
+    
+    <div id="quizView" style="display:none;">
+        <div class="meta" id="currentUserName"></div> <div id="section" class="section">Presiona "Iniciar" para comenzar</div>
+        <div id="question" class="question"></div>
+        <div id="sourceLine" class="sourceLine"></div>
+
+        <input id="userAnswer" type="text" placeholder="Escribe tu respuesta aquí..." style="display:none;">
+
+        <div id="feedback" class="feedback"></div>
+
+        <div class="buttons">
+          <button id="startBtn">Iniciar</button>
+          <button id="checkBtn" style="display:none;">Comprobar</button>
+          <button id="nextBtn" style="display:none;">Siguiente</button>
+          <button id="finishBtn" class="warning" style="display:none;">Terminar</button>
+          <button id="restartBtn" class="secondary" style="display:none;">Reiniciar</button>
+        </div>
+
+        <div id="progress" class="progress"></div>
+    </div>
+
   </div>
 </main>
 
@@ -112,13 +170,23 @@
 </footer>
 
 <script>
-const csvUrl = "https://raw.githubusercontent.com/alexc316/MC/main/Guia_de_entrenamiento_MC.csv";
+// --- CONFIGURACIÓN ---
+const QUIZ_CSV_URL = "https://raw.githubusercontent.com/alexc316/MC/main/Guia_de_entrenamiento_MC.csv"; // URL de tu CSV de preguntas
+const EMPLOYEES_CSV_URL = "https://raw.githubusercontent.com/alexc316/MC/main/empleados_MC.csv"; // **DEBES CAMBIAR ESTA URL** a la de tu CSV de empleados
+const CREATOR_ID = "156372";
+const CREATOR_PASS = "a123alex";
+const LOG_KEY = "mc_access_log"; // Clave para guardar el registro en localStorage
 
-let data = [];
+// --- VARIABLES GLOBALES DEL QUIZ ---
+let quizData = [];
+let employeesData = {};
+let currentEmployee = null;
 let randomized = [];
 let currentIndex = 0;
 let correctCount = 0;
 let wrongCount = 0;
+
+// --- UTILERÍAS ---
 
 function normalizeText(s) {
   if (!s) return "";
@@ -142,30 +210,6 @@ function isSimilar(a, b) {
   return (common / Math.max(wordsA.length, wordsB.length)) >= 0.6;
 }
 
-async function loadCSV() {
-  const res = await fetch(csvUrl);
-  const raw = await res.text();
-  const clean = raw.replace(/^\uFEFF/, '').trim();
-  const delimiter = clean.includes(';') ? ';' : ',';
-  const rows = clean.split(/\r?\n/).map(line =>
-    line.split(new RegExp(`${delimiter}(?=(?:(?:[^"]*"){2})*[^"]*$)`)).map(cell => cell.replace(/(^"|"$)/g, '').trim())
-  );
-  const header = rows[0].map(h => h.toLowerCase());
-  const idx = {
-    section: header.findIndex(h => /secci/.test(h)),
-    question: header.findIndex(h => /pregunt/.test(h)),
-    answer: header.findIndex(h => /respuest/.test(h)),
-    source: header.findIndex(h => /fuente|source/.test(h))
-  };
-  data = rows.slice(1).map(r => ({
-    section: r[idx.section] || '',
-    question: r[idx.question] || '',
-    answer: r[idx.answer] || '',
-    source: r[idx.source] || ''
-  })).filter(d => d.question && d.answer);
-  resetState();
-}
-
 function shuffle(arr) {
   const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -175,8 +219,214 @@ function shuffle(arr) {
   return a;
 }
 
-function resetState() {
-  randomized = shuffle(data);
+/** Procesa el texto CSV y devuelve un array de objetos o un objeto de empleados */
+async function processCSV(url, keyColumn = null) {
+    try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Error al cargar CSV: ${res.statusText}`);
+        const raw = await res.text();
+        const clean = raw.replace(/^\uFEFF/, '').trim();
+        const delimiter = clean.includes(';') ? ';' : ',';
+        
+        const rows = clean.split(/\r?\n/).map(line =>
+            line.split(new RegExp(`${delimiter}(?=(?:(?:[^"]*"){2})*[^"]*$)`)).map(cell => cell.replace(/(^"|"$)/g, '').trim())
+        );
+        
+        const header = rows[0].map(h => h.toLowerCase().replace(/[^a-z0-9_]+/g, '_'));
+        const data = rows.slice(1);
+        
+        if (keyColumn) {
+            // Caso Empleados: Retorna un objeto mapeado por el valor de la columna clave
+            const keyIndex = header.findIndex(h => h === keyColumn.toLowerCase().replace(/[^a-z0-9_]+/g, '_'));
+            if (keyIndex === -1) throw new Error(`Columna clave '${keyColumn}' no encontrada en el CSV.`);
+            
+            const result = {};
+            data.forEach(row => {
+                const key = row[keyIndex];
+                if (key) {
+                    const item = {};
+                    header.forEach((h, i) => { item[h] = row[i] || ''; });
+                    result[key] = item;
+                }
+            });
+            return result;
+        } else {
+            // Caso Quiz: Retorna un array de objetos de preguntas
+            const idx = {
+                section: header.findIndex(h => /secci/.test(h)),
+                question: header.findIndex(h => /pregunt/.test(h)),
+                answer: header.findIndex(h => /respuest/.test(h)),
+                source: header.findIndex(h => /fuente|source/.test(h))
+            };
+            
+            return data.map(r => ({
+                section: r[idx.section] || '',
+                question: r[idx.question] || '',
+                answer: r[idx.answer] || '',
+                source: r[idx.source] || ''
+            })).filter(d => d.question && d.answer);
+        }
+    } catch (error) {
+        console.error("Error al cargar o procesar el CSV:", error);
+        return keyColumn ? {} : [];
+    }
+}
+
+
+// --- LÓGICA DE CARGA DE DATOS ---
+
+async function loadData() {
+    // Carga los dos archivos CSV en paralelo
+    const [quiz, employees] = await Promise.all([
+        processCSV(QUIZ_CSV_URL),
+        processCSV(EMPLOYEES_CSV_URL, 'no_empleado') // Usamos 'no_empleado' como columna clave
+    ]);
+
+    quizData = quiz;
+    employeesData = employees;
+    
+    // Si la data está lista, mostramos el formulario de acceso.
+    if (quizData.length > 0 && Object.keys(employeesData).length > 0) {
+         document.getElementById('welcomeFeedback').innerText = "Datos cargados. ¡Listo para iniciar! 🚀";
+    } else {
+         document.getElementById('welcomeFeedback').innerText = "ERROR: No se pudo cargar la data del quiz o de empleados. Revisa las URLs de los CSV.";
+         document.getElementById('accessBtn').disabled = true;
+    }
+}
+
+// --- LÓGICA DE ACCESO Y REGISTRO ---
+
+function handleAccess() {
+    const num = document.getElementById('employeeNumber').value.trim();
+    const fb = document.getElementById('welcomeFeedback');
+    
+    if (!num) {
+        fb.innerText = "Por favor, ingresa tu número de empleado.";
+        return;
+    }
+
+    if (num === CREATOR_ID) {
+        // ACCESO DE CREADOR
+        const pass = prompt("¡Hola, creador Alexis! Ingresa tu contraseña (a123alex):");
+        if (pass === CREATOR_PASS) {
+            showCreatorView();
+            // No se guarda el log del creador si entra al panel, solo si entra al quiz
+        } else {
+            fb.innerText = "Contraseña incorrecta para el Creador.";
+        }
+        return;
+    }
+    
+    // ACCESO DE EMPLEADO
+    const employee = employeesData[num];
+    if (employee) {
+        currentEmployee = employee;
+        logAccess(employee);
+        showQuizView();
+    } else {
+        fb.innerText = "Número de empleado no encontrado. Intenta de nuevo.";
+    }
+}
+
+function logAccess(employee) {
+    // 1. Cargar el log existente
+    let log = [];
+    try {
+        log = JSON.parse(localStorage.getItem(LOG_KEY)) || [];
+    } catch (e) {
+        console.error("Error al parsear el log de accesos", e);
+        log = [];
+    }
+
+    // 2. Crear la nueva entrada
+    const newEntry = {
+        id: employee.no_empleado,
+        name: employee.nombre,
+        puesto: employee.puesto,
+        time: new Date().toISOString()
+    };
+
+    // 3. Agregar y guardar (Limitamos el log a, por ejemplo, los últimos 100 accesos)
+    log.unshift(newEntry); 
+    if (log.length > 100) log.pop(); 
+    localStorage.setItem(LOG_KEY, JSON.stringify(log));
+}
+
+function showCreatorView() {
+    document.getElementById('welcomeView').style.display = 'none';
+    document.getElementById('quizView').style.display = 'none';
+    document.getElementById('creatorView').style.display = 'block';
+    loadLogList();
+}
+
+function loadLogList() {
+    const logList = document.getElementById('logList');
+    let log = [];
+    try {
+        log = JSON.parse(localStorage.getItem(LOG_KEY)) || [];
+    } catch (e) {
+        log = [];
+    }
+    
+    logList.innerHTML = '';
+    
+    if (log.length === 0) {
+        logList.innerHTML = '<li>No se ha registrado ningún acceso.</li>';
+        return;
+    }
+    
+    log.forEach(entry => {
+        const li = document.createElement('li');
+        const date = new Date(entry.time).toLocaleString('es-MX', {
+            year: 'numeric', month: 'short', day: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
+        li.innerHTML = `
+            <div>
+                <span class="log-name">${entry.name} (${entry.id})</span>
+                <div class="log-puesto">${entry.puesto}</div>
+            </div>
+            <span class="log-time">${date}</span>
+        `;
+        logList.appendChild(li);
+    });
+}
+
+function clearLog() {
+    if (confirm("¿Estás seguro de que quieres ELIMINAR el registro de accesos en ESTE NAVEGADOR? Esta acción es irreversible.")) {
+        localStorage.removeItem(LOG_KEY);
+        loadLogList();
+    }
+}
+
+function showQuizView() {
+    if (!currentEmployee) {
+        // Si por alguna razón no hay empleado, volvemos a la bienvenida
+        document.getElementById('welcomeView').style.display = 'block';
+        document.getElementById('quizView').style.display = 'none';
+        document.getElementById('creatorView').style.display = 'none';
+        return;
+    }
+
+    // Ocultar vistas de bienvenida y creador
+    document.getElementById('welcomeView').style.display = 'none';
+    document.getElementById('creatorView').style.display = 'none';
+    
+    // Mostrar vista del quiz
+    document.getElementById('quizView').style.display = 'block';
+    
+    // Mostrar la bienvenida personalizada en el quiz
+    document.getElementById('currentUserName').innerText = 
+        `Bienvenido(a), ${currentEmployee.nombre} - ${currentEmployee.puesto} | Empleado #${currentEmployee.no_empleado}`;
+
+    resetQuizState();
+}
+
+
+// --- LÓGICA DEL QUIZ (Mantenida y adaptada) ---
+
+function resetQuizState() {
+  randomized = shuffle(quizData);
   currentIndex = 0;
   correctCount = 0;
   wrongCount = 0;
@@ -256,8 +506,29 @@ function showResults() {
   updateProgress();
 }
 
+
+// --- EVENT LISTENERS ---
+
+document.getElementById('accessBtn').addEventListener('click', handleAccess);
+
+document.getElementById('employeeNumber').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') handleAccess();
+});
+
+document.getElementById('backToQuizBtn').addEventListener('click', () => {
+    // Para el creador, volvemos a la vista de bienvenida para que pueda ingresar como usuario normal
+    document.getElementById('creatorView').style.display = 'none';
+    document.getElementById('welcomeView').style.display = 'block';
+    document.getElementById('employeeNumber').value = '';
+    document.getElementById('welcomeFeedback').innerText = "Vuelve a ingresar tu número de empleado para iniciar el Quiz.";
+    currentEmployee = null; // Reiniciamos el usuario
+});
+
+document.getElementById('clearLogBtn').addEventListener('click', clearLog);
+
+// Eventos del Quiz (Mantenidos)
 document.getElementById('startBtn').addEventListener('click', () => {
-  randomized = shuffle(data);
+  randomized = shuffle(quizData);
   currentIndex = 0;
   correctCount = 0;
   wrongCount = 0;
@@ -282,9 +553,10 @@ document.getElementById('finishBtn').addEventListener('click', () => {
   showResults();
 });
 
-document.getElementById('restartBtn').addEventListener('click', resetState);
+document.getElementById('restartBtn').addEventListener('click', resetQuizState);
 
-loadCSV();
+// --- INICIO ---
+loadData();
 </script>
 </body>
 </html>
