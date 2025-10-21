@@ -78,7 +78,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap; /* Permite que el contenido se envuelva */
+      flex-wrap: wrap; 
   }
   #logList li:last-child {
       border-bottom: none;
@@ -120,6 +120,7 @@
   }
   button.secondary { background:#555; }
   button.warning { background:#ffcc00; color:#222; }
+  button.green-btn { background:#2e7d32; } /* Nuevo estilo para botón de descargar */
   button:hover { filter:brightness(.95); }
   .progress { text-align:center; margin-top:10px; color:#555; font-size:.95rem; }
   footer { margin-top:30px; padding: 10px; font-size: 0.9rem; color: #555; text-align:center;}
@@ -137,7 +138,7 @@
     
     <div id="welcomeView">
         <h2 id="welcomeTitle">Bienvenido a la Guía de Estudio</h2>
-        <p>Por favor, ingresa tu número de empleado para comenzar:</p>
+        <p id="promptText">Por favor, ingresa tu número de empleado para comenzar:</p>
         <input id="employeeNumber" type="number" placeholder="Ej: 156372" autofocus>
         
         <div id="creatorPasswordContainer" style="display:none; margin-top: 10px;">
@@ -146,20 +147,27 @@
         
         <button id="accessBtn">Acceder</button>
         <p id="welcomeFeedback" style="color:red; margin-top:10px;"></p>
+
+        <div id="optionsMenu" style="display:none; margin-top: 20px;">
+            <p id="welcomeUserMsg" style="font-weight: 600;"></p>
+            <button id="startQuizBtn" style="background-color: #ffc107; color: #222;">Iniciar Quiz</button>
+            <button id="panelCreatorBtn" class="secondary" style="display:none;">Panel de Creador</button>
+            <button id="logoutBtn" class="warning" style="background-color: #b71c1c;">Cambiar de Usuario</button>
+        </div>
     </div>
 
     <div id="creatorView" style="display:none;">
         <h2>Panel de Creador (156372 - Alexis)</h2>
-        <p>Registro de Accesos de Usuarios (Local)</p>
+        <p>Registro de Accesos y Calificaciones (Local)</p>
         <p style="font-size:0.85em; color:red;">
-            ⚠️ **Importante:** Este registro es **LOCAL** (solo visible en este navegador/equipo). 
-            Para ver accesos de otros equipos se necesitaría un servidor o base de datos.
+            ⚠️ **Importante:** Este registro es **LOCAL** (solo visible en este navegador/equipo).
         </p>
         <ul id="logList">
             <li>No hay registros aún.</li>
         </ul>
-        <button id="clearLogBtn" class="warning">Limpiar Registro (Solo tu navegador)</button>
-        <button id="backToQuizBtn" class="secondary">Volver al Inicio</button>
+        <button id="downloadLogBtn" class="green-btn">Descargar Log (CSV para Excel)</button>
+        <button id="clearLogBtn" class="warning">Limpiar Registro</button>
+        <button id="backToMenuBtn" class="secondary">Volver al Menú</button>
     </div>
     
     <div id="quizView" style="display:none;">
@@ -307,6 +315,7 @@ async function loadData() {
     
     if (quizData.length > 0 && Object.keys(employeesData).length > 0) {
          document.getElementById('welcomeFeedback').innerText = "Datos cargados. ¡Listo para iniciar! 🚀";
+         document.getElementById('accessBtn').disabled = false;
     } else {
          document.getElementById('welcomeFeedback').innerText = "ERROR: No se pudo cargar la data del quiz o de empleados. Revisa las URLs de los CSV.";
          document.getElementById('accessBtn').disabled = true;
@@ -321,33 +330,87 @@ function handleAccess() {
     const passInput = document.getElementById('creatorPassword');
     
     fb.innerText = "";
-    
+    currentEmployee = null; // Reiniciar por si acaso
+
     if (!num) {
         fb.innerText = "Por favor, ingresa tu número de empleado.";
         return;
     }
     
-    // Si es el Creador, debe ingresar la contraseña
+    // 1. Validar al Creador
     if (num === CREATOR_ID) {
         if (passInput.value.trim() === CREATOR_PASS) {
-            showCreatorView();
+            // Creador validado
+            currentEmployee = employeesData[num];
+            showOptionsMenu(true); // Mostrar menú con opción de Creador
+            return;
         } else {
             fb.innerText = "Contraseña incorrecta para el Creador.";
             passInput.value = '';
+            return;
         }
-        return;
     }
     
-    // Si NO es el Creador, busca el empleado normal
+    // 2. Validar Empleado Normal
     const employee = employeesData[num];
     if (employee) {
+        // Empleado validado
         currentEmployee = employee;
-        // logAccess(employee); // El log de acceso simple se quita para solo registrar intentos de quiz
-        showQuizView();
+        showOptionsMenu(false); // Mostrar menú sin opción de Creador
     } else {
         fb.innerText = "Número de empleado no encontrado. Intenta de nuevo.";
     }
 }
+
+function showOptionsMenu(isCreator) {
+    const numInput = document.getElementById('employeeNumber');
+    const passContainer = document.getElementById('creatorPasswordContainer');
+    const accBtn = document.getElementById('accessBtn');
+    const menu = document.getElementById('optionsMenu');
+    const panelBtn = document.getElementById('panelCreatorBtn');
+    const promptText = document.getElementById('promptText');
+    const welcomeMsg = document.getElementById('welcomeUserMsg');
+
+    // Ocultar campos de acceso
+    numInput.style.display = 'none';
+    passContainer.style.display = 'none';
+    accBtn.style.display = 'none';
+    promptText.style.display = 'none';
+    
+    // Mostrar opciones
+    menu.style.display = 'block';
+    
+    // Personalizar mensaje y opciones
+    if (currentEmployee) {
+        welcomeMsg.innerText = `¡Hola, ${currentEmployee.nombre_del_empleado}! ¿Qué deseas hacer?`;
+    }
+
+    if (isCreator) {
+        panelBtn.style.display = 'inline-block';
+    } else {
+        panelBtn.style.display = 'none';
+    }
+}
+
+function showLoginScreen() {
+    // Mostrar campos de acceso
+    document.getElementById('employeeNumber').style.display = 'block';
+    document.getElementById('creatorPasswordContainer').style.display = 'none';
+    document.getElementById('creatorPassword').value = '';
+    document.getElementById('accessBtn').style.display = 'inline-block';
+    document.getElementById('promptText').style.display = 'block';
+    document.getElementById('employeeNumber').value = '';
+
+    // Ocultar vistas y menú
+    document.getElementById('optionsMenu').style.display = 'none';
+    document.getElementById('creatorView').style.display = 'none';
+    document.getElementById('quizView').style.display = 'none';
+    document.getElementById('welcomeView').style.display = 'block';
+
+    currentEmployee = null;
+    document.getElementById('welcomeFeedback').innerText = "Vuelve a ingresar tu número de empleado.";
+}
+
 
 // LÓGICA: Muestra/Oculta el campo de contraseña si es el Creador
 function checkCreatorId() {
@@ -357,16 +420,13 @@ function checkCreatorId() {
     
     if (num === CREATOR_ID) {
         passContainer.style.display = 'block';
-        passInput.focus();
     } else {
         passContainer.style.display = 'none';
-        passInput.value = ''; // Limpiar la contraseña si cambia de ID
+        passInput.value = ''; 
     }
 }
 
 function logAccess(employee, score, total) {
-    // NOTA IMPORTANTE: Esta función SOLO guarda el registro en este navegador (Local Storage).
-    // Para que los registros sean globales y se vean en otros equipos, se requiere una base de datos central.
     let log = [];
     try {
         log = JSON.parse(localStorage.getItem(LOG_KEY)) || [];
@@ -419,7 +479,6 @@ function loadLogList() {
             hour: '2-digit', minute: '2-digit'
         });
         
-        // Formato de la calificación
         const scoreText = entry.score !== undefined ? `${entry.score}/${entry.total}` : 'N/A';
         const scoreColor = entry.score / entry.total >= 0.7 ? '#2e7d32' : '#b71c1c';
 
@@ -442,11 +501,60 @@ function clearLog() {
     }
 }
 
+function exportLogToCSV() {
+    let log = [];
+    try {
+        log = JSON.parse(localStorage.getItem(LOG_KEY)) || [];
+    } catch (e) {
+        alert("Error al leer el registro local.");
+        return;
+    }
+
+    if (log.length === 0) {
+        alert("El registro está vacío. No hay nada para descargar.");
+        return;
+    }
+    
+    const headers = ["Fecha y Hora", "No. Empleado", "Nombre del Empleado", "Puesto", "Correctas", "Total Preguntas", "Calificacion (%)"];
+    
+    const csvRows = log.map(entry => {
+        const date = new Date(entry.time).toLocaleString('es-MX', {
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit', second: '2-digit'
+        }).replace(/,/g, ''); 
+        
+        const percentage = entry.total > 0 ? ((entry.score / entry.total) * 100).toFixed(2) : '0.00';
+
+        return [
+            `"${date}"`,
+            `"${entry.id}"`,
+            `"${entry.name.replace(/"/g, '""')}"`, 
+            `"${entry.puesto.replace(/"/g, '""')}"`,
+            `"${entry.score}"`,
+            `"${entry.total}"`,
+            `"${percentage}%"`
+        ].join(';'); 
+    });
+    
+    const csvContent = [
+        headers.join(';'),
+        ...csvRows
+    ].join('\n');
+
+    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `Registro_MC_${new Date().toISOString().slice(0, 10)}.csv`);
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
 function showQuizView() {
     if (!currentEmployee) {
-        document.getElementById('welcomeView').style.display = 'block';
-        document.getElementById('quizView').style.display = 'none';
-        document.getElementById('creatorView').style.display = 'none';
+        showLoginScreen();
         return;
     }
 
@@ -454,7 +562,6 @@ function showQuizView() {
     document.getElementById('creatorView').style.display = 'none';
     document.getElementById('quizView').style.display = 'block';
     
-    // Muestra la bienvenida personalizada con la clave corregida
     document.getElementById('currentUserName').innerText = 
         `Bienvenido(a), ${currentEmployee.nombre_del_empleado} - ${currentEmployee.puesto} | Empleado #${currentEmployee.no_empleado}`;
 
@@ -462,7 +569,7 @@ function showQuizView() {
 }
 
 
-// --- LÓGICA DEL QUIZ ---
+// --- LÓGICA DEL QUIZ (Sin cambios funcionales) ---
 
 function resetQuizState() {
   randomized = shuffle(quizData);
@@ -527,7 +634,6 @@ function showResults() {
   const totalAnswered = correctCount + wrongCount;
   const percentage = correctCount / totalQuestions;
   
-  // FUNCIONALIDAD: Registra el resultado antes de mostrar el resumen
   if(currentEmployee) {
       logAccess(currentEmployee, correctCount, totalQuestions);
   }
@@ -557,7 +663,6 @@ function showResults() {
 
 document.getElementById('accessBtn').addEventListener('click', handleAccess);
 
-// Permite usar Enter para iniciar sesión
 document.getElementById('employeeNumber').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') handleAccess();
 });
@@ -565,22 +670,22 @@ document.getElementById('creatorPassword').addEventListener('keypress', function
     if (e.key === 'Enter') handleAccess();
 });
 
-// LÓGICA: Verifica si el ID es el del creador y muestra el campo de contraseña
 document.getElementById('employeeNumber').addEventListener('input', checkCreatorId);
 
+// Nuevos eventos del Menú de Opciones
+document.getElementById('startQuizBtn').addEventListener('click', showQuizView);
+document.getElementById('panelCreatorBtn').addEventListener('click', showCreatorView);
+document.getElementById('logoutBtn').addEventListener('click', showLoginScreen); // Nuevo botón para desloguearse
 
-document.getElementById('backToQuizBtn').addEventListener('click', () => {
-    // Volvemos a la vista de bienvenida
+// Evento para volver al menú desde el Panel de Creador
+document.getElementById('backToMenuBtn').addEventListener('click', () => {
     document.getElementById('creatorView').style.display = 'none';
-    document.getElementById('welcomeView').style.display = 'block';
-    document.getElementById('employeeNumber').value = '';
-    document.getElementById('creatorPassword').value = '';
-    document.getElementById('creatorPasswordContainer').style.display = 'none';
-    document.getElementById('welcomeFeedback').innerText = "Vuelve a ingresar tu número de empleado.";
-    currentEmployee = null; // Reiniciamos el usuario
+    showOptionsMenu(currentEmployee && currentEmployee.no_empleado === CREATOR_ID);
 });
 
+
 document.getElementById('clearLogBtn').addEventListener('click', clearLog);
+document.getElementById('downloadLogBtn').addEventListener('click', exportLogToCSV); 
 
 // Eventos del Quiz
 document.getElementById('startBtn').addEventListener('click', () => {
