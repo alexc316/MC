@@ -1,762 +1,156 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Guía de estudio a entrenador MC</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía de Estudio MC</title>
 <style>
-  body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(to bottom right, #fffdf5, #fff);
-    color: #222;
-    text-align: center;
-  }
-
-  header {
-    background-color: #fff;
-    padding: 20px 0;
-    border-bottom: 4px solid #ffc107;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-  }
-
-  header img { width: 90px; vertical-align: middle; }
-  header h1 { display: inline-block; margin-left: 10px; color: #c8102e; font-size: 1.8rem; vertical-align: middle; }
-
-  main { padding: 40px 20px; }
-  .card {
-    background: #ffffff;
-    border-radius: 20px;
-    display: inline-block;
-    padding: 30px;
-    width: 90%;
-    max-width: 900px;
-    box-shadow: 0 6px 25px rgba(0,0,0,0.15);
-    border-top: 6px solid #ffcc00;
-    text-align: left;
-  }
-
-  /* Estilos específicos para las nuevas secciones */
-  #welcomeView, #creatorView {
-    text-align: center;
-  }
-  
-  /* ESTÉTICA: Título de bienvenida grande y rojo */
-  #welcomeTitle { 
-    color: #c8102e; 
-    margin-bottom: 20px; 
-    font-size: 2.2rem; 
-    font-weight: 900; 
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.06); 
-  }
-
-  #welcomeView input {
-    width: 80%;
-    max-width: 320px;
-    padding: 12px;
-    margin: 8px auto;
-    border-radius: 8px;
-    border: 2px solid #ddd;
-    font-size: 1rem;
-    text-align: center;
-    display: block;
-  }
-
-  #authButtons { margin-top: 6px; }
-  .auth-btn { margin: 6px; padding: 10px 18px; border-radius:8px; font-weight:700; cursor:pointer; border:none; }
-  .auth-create { background:#2e7d32; color:white; }
-  .auth-login { background:#c8102e; color:white; }
-
-  /* Estilo para el log del creador */
-  #logList {
-      list-style: none;
-      padding: 0;
-      max-height: 400px;
-      overflow-y: auto;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      margin-top: 20px;
-  }
-  #logList li {
-      padding: 10px;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap; 
-  }
-  #logList li:last-child { border-bottom: none; }
-  .log-name { font-weight: 600; color: #c8102e; width: 100%; text-align:left; }
-  .log-puesto { font-size: 0.85em; color: #777; width: 100%; text-align:left; }
-  .log-time { font-size: 0.85em; color: #555; text-align:right; }
-  .log-score { font-size: 0.9em; color: #2e7d32; font-weight:700; margin-left: 10px; }
-
-  /* Estilos del quiz (ya existentes) */
-  .meta { text-align:center; margin-bottom: 10px; color:#777; font-size: .95rem }
-  .section { font-weight: 700; color:#c8102e; margin-bottom: 8px; text-align:center; }
-  .question { font-size: 1.2rem; font-weight: 600; color: #222; margin: 12px 0; text-align:center; }
-  .sourceLine { text-align:center; color:#555; font-size:.9rem; margin-bottom:10px; }
-  #userAnswer {
-    width: calc(100% - 30px);
-    padding: 12px;
-    margin: 0 auto;
-    display:block;
-    border-radius:8px;
-    border:2px solid #ddd;
-    font-size:1rem;
-  }
-  .feedback { margin-top: 16px; padding: 14px; border-radius:10px; display:none; white-space:pre-wrap; }
-  .correct { background:#e6ffed; color:#2e7d32; border-left:5px solid #2e7d32; }
-  .incorrect { background:#ffe6e6; color:#b71c1c; border-left:5px solid #b71c1c; }
-  .buttons { text-align:center; margin-top:16px; }
-  button {
-    margin: 8px;
-    background: #c8102e;
-    color: #fff;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: .98rem;
-    font-weight: 700;
-  }
-  button.secondary { background:#555; }
-  button.warning { background:#ffcc00; color:#222; }
-  button.green-btn { background:#2e7d32; } /* Nuevo estilo */
-  button:hover { filter:brightness(.95); }
-  .progress { text-align:center; margin-top:10px; color:#555; font-size:.95rem; }
-
-  footer { margin-top:30px; padding: 10px; font-size: 0.9rem; color: #555; text-align:center;}
-  .small { font-size:0.9rem; color:#666; }
+  body { font-family: 'Poppins', sans-serif; text-align:center; background:#fffdf5; }
+  .card { background:#fff; padding:30px; border-radius:20px; box-shadow:0 6px 25px rgba(0,0,0,0.15); max-width:700px; margin:40px auto; text-align:left; }
+  input { width:80%; max-width:300px; padding:12px; margin:10px auto; border-radius:8px; border:2px solid #ddd; display:block; text-align:center; }
+  button { margin:8px; padding:10px 18px; border:none; border-radius:8px; cursor:pointer; font-weight:700; background:#c8102e; color:#fff; }
+  .secondary { background:#555; }
+  .warning { background:#ffcc00; color:#222; }
+  .green-btn { background:#2e7d32; }
+  #createModal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; }
+  #createModal .modal-content { background:#fff; padding:20px; border-radius:15px; max-width:400px; width:90%; text-align:center; }
+  #feedbackMsg { color:red; margin-top:10px; }
 </style>
 </head>
 <body>
 
-<header>
-  <img src="https://th.bing.com/th/id/R.466663e3e2b9cdbe29c5d4e0721ea9b7?rik=y%2b93vLaQvfidzg&riu=http%3a%2f%2fpngimg.com%2fuploads%2fmcdonalds%2fmcdonalds_PNG9.png&ehk=EcWIjy9En23IUg5CDObkhF0leLXrlb95DXKIAb%2fMM50%3d&risl=&pid=ImgRaw&r=0" alt="Logo" />
-  <h1>Guía de estudio a entrenador MC</h1>
-</header>
-
-<main>
-  <div class="card">
-    
-    <!-- WELCOME / AUTH -->
-    <div id="welcomeView">
-        <h2 id="welcomeTitle">Bienvenido a la Guía de Estudio</h2>
-        <p id="promptText" class="small">Crea una cuenta o inicia sesión con correo y contraseña.</p>
-
-        <!-- Aquí se inyectan inputs de auth desde JS (email / pass / botones) -->
-        <div id="authContainer" style="margin-top: 6px;"></div>
-
-        <p id="welcomeFeedback" style="color:red; margin-top:10px;"></p>
-
-        <div id="optionsMenu" style="display:none; margin-top: 20px;">
-            <p id="welcomeUserMsg" style="font-weight: 600;"></p>
-            <button id="startQuizBtn" style="background-color: #ffc107; color: #222;">Iniciar Quiz</button>
-            <button id="panelCreatorBtn" class="secondary" style="display:none;">Panel de Creador</button>
-            <button id="logoutBtn" class="warning" style="background-color: #b71c1c;">Cerrar sesión</button>
-        </div>
-    </div>
-
-    <!-- CREATOR PANEL -->
-    <div id="creatorView" style="display:none;">
-        <h2>Panel de Creador (Admin)</h2>
-        <p>Registros (accesos y resultados) desde Firestore</p>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
-          <button id="refreshLogsBtn" class="secondary">Actualizar</button>
-          <button id="downloadLogBtn" class="green-btn">Descargar CSV</button>
-          <button id="backToMenuBtn" class="secondary">Volver al Menú</button>
-        </div>
-
-        <ul id="logList">
-            <li>No hay registros aún.</li>
-        </ul>
-    </div>
-    
-    <!-- QUIZ VIEW -->
-    <div id="quizView" style="display:none;">
-        <div class="meta" id="currentUserName"></div> 
-        <div id="section" class="section">Presiona "Iniciar" para comenzar</div>
-        <div id="question" class="question"></div>
-        <div id="sourceLine" class="sourceLine"></div>
-
-        <input id="userAnswer" type="text" placeholder="Escribe tu respuesta aquí..." style="display:none;">
-
-        <div id="feedback" class="feedback"></div>
-
-        <div class="buttons">
-          <button id="startBtn">Iniciar</button>
-          <button id="checkBtn" style="display:none;">Comprobar</button>
-          <button id="nextBtn" style="display:none;">Siguiente</button>
-          <button id="finishBtn" class="warning" style="display:none;">Terminar</button>
-          <button id="restartBtn" class="secondary" style="display:none;">Reiniciar</button>
-        </div>
-
-        <div id="progress" class="progress"></div>
-    </div>
-
+<div class="card">
+  <h2>Bienvenido a la Guía de Estudio MC</h2>
+  <div id="loginView">
+    <input id="emailInput" type="email" placeholder="Correo electrónico">
+    <input id="passwordInput" type="password" placeholder="Contraseña">
+    <button id="loginBtn">Iniciar Sesión</button>
+    <button id="showCreateBtn" class="secondary">Crear Cuenta</button>
+    <p id="feedbackMsg"></p>
   </div>
-</main>
 
-<footer>
-  © 2025 Mc creador | Proyecto de Entrenamiento MC 🍟
-</footer>
+  <div id="quizView" style="display:none;">
+    <h3 id="userDisplay"></h3>
+    <p id="section"></p>
+    <p id="question"></p>
+    <input id="userAnswer" type="text" placeholder="Escribe tu respuesta">
+    <div id="feedback" style="display:none;"></div>
+    <div>
+      <button id="checkBtn">Comprobar</button>
+      <button id="nextBtn">Siguiente</button>
+      <button id="finishBtn" class="warning">Terminar</button>
+      <button id="logoutBtn" class="secondary">Cerrar Sesión</button>
+    </div>
+  </div>
+</div>
 
-<!-- FIREBASE + APP LOGIC -->
+<!-- Modal para Crear Cuenta -->
+<div id="createModal">
+  <div class="modal-content">
+    <h3>Crear Cuenta</h3>
+    <input id="newName" placeholder="Nombre completo">
+    <input id="newPuesto" placeholder="Puesto">
+    <input id="newEmail" placeholder="Correo electrónico" type="email">
+    <input id="newPassword" placeholder="Contraseña" type="password">
+    <button id="createAccountBtn">Crear Cuenta</button>
+    <button id="closeModalBtn" class="secondary">Cancelar</button>
+    <p id="createFeedback" style="color:red;"></p>
+  </div>
+</div>
+
 <script type="module">
-/* =========================
-   CONFIG — FIREBASE SDK
-   ========================= */
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-analytics.js";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  setDoc,
-  doc,
-  serverTimestamp,
-  query,
-  orderBy,
-  getDocs,
-  limit
-} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-/* --- Tu configuración (la que compartiste) --- */
-const firebaseConfig = {
-  apiKey: "AIzaSyB57-QWSTYwBmbwf5cK0mHVJSYCdkBCxkM",
-  authDomain: "mcantea.firebaseapp.com",
-  projectId: "mcantea",
-  storageBucket: "mcantea.firebasestorage.app",
-  messagingSenderId: "364639775835",
-  appId: "1:364639775835:web:aee974c576c2e4d515237e",
-  measurementId: "G-0BYWEJJ57G"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyB57-QWSTYwBmbwf5cK0mHVJSYCdkBCxkM",
+    authDomain: "mcantea.firebaseapp.com",
+    projectId: "mcantea",
+    storageBucket: "mcantea.appspot.com",
+    messagingSenderId: "364639775835",
+    appId: "1:364639775835:web:aee974c576c2e4d515237e",
+    measurementId: "G-0BYWEJJ57G"
+  };
 
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const auth = getAuth(app);
-const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-/* --- Admin (Creador) --- */
-const CREATOR_EMAIL = "alexis@mc.com";
-const CREATOR_PASS = "a123alex"; // la contraseña que dijiste
+  const loginBtn = document.getElementById('loginBtn');
+  const showCreateBtn = document.getElementById('showCreateBtn');
+  const feedbackMsg = document.getElementById('feedbackMsg');
 
-/* =========================
-   APP: Variables y util
-   ========================= */
-const QUIZ_CSV_URL = "https://raw.githubusercontent.com/alexc316/MC/main/Guia_de_entrenamiento_MC.csv";
+  const createModal = document.getElementById('createModal');
+  const createAccountBtn = document.getElementById('createAccountBtn');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+  const createFeedback = document.getElementById('createFeedback');
 
-let quizData = [];
-let randomized = [];
-let currentIndex = 0;
-let correctCount = 0;
-let wrongCount = 0;
-let currentUser = null; // { uid, email, role }
+  let currentUser = null;
 
-/* ---------- UTIL ---------- */
-function normalizeText(s) {
-  if (!s) return "";
-  let t = String(s).toLowerCase().trim();
-  t = t.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  t = t.replace(/[^\p{L}\p{N}\s]/gu, '');
-  t = t.replace(/\s+/g, ' ').trim();
-  return t;
-}
-function isSimilar(a, b) {
-  const A = normalizeText(a);
-  const B = normalizeText(b);
-  if (!A || !B) return false;
-  if (A === B || A.includes(B) || B.includes(A)) return true;
-  const wordsA = A.split(' ');
-  const wordsB = B.split(' ');
-  const setB = new Set(wordsB);
-  let common = 0;
-  for (const w of wordsA) if (setB.has(w)) common++;
-  return (common / Math.max(wordsA.length, wordsB.length)) >= 0.6;
-}
-function shuffle(arr) {
-  const a = arr.slice();
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
+  // --- LOGIN ---
+  loginBtn.addEventListener('click', async () => {
+    const email = document.getElementById('emailInput').value.trim();
+    const password = document.getElementById('passwordInput').value.trim();
+    feedbackMsg.innerText = "";
+    if (!email || !password) { feedbackMsg.innerText="Ingresa correo y contraseña"; return; }
 
-/* =========================
-   CARGA CSV DE PREGUNTAS
-   ========================= */
-async function processCSV(url) {
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('No se pudo obtener el CSV');
-    const raw = await res.text();
-    const clean = raw.replace(/^\uFEFF/, '').trim();
-    const delimiter = clean.includes(';') ? ';' : ',';
-    const rows = clean.split(/\r?\n/).map(line =>
-      line.split(new RegExp(`${delimiter}(?=(?:(?:[^"]*"){2})*[^"]*$)`)).map(cell => cell.replace(/(^"|"$)/g, '').trim())
-    ).filter(r => r.length);
-    const header = rows[0].map(h => h.toLowerCase());
-    const idx = {
-      section: header.findIndex(h => /secci/.test(h)),
-      question: header.findIndex(h => /pregunt/.test(h)),
-      answer: header.findIndex(h => /respuest/.test(h)),
-      source: header.findIndex(h => /fuente|source/.test(h))
-    };
-    const data = rows.slice(1).map(r => ({
-      section: r[idx.section] || '',
-      question: r[idx.question] || '',
-      answer: r[idx.answer] || '',
-      source: r[idx.source] || ''
-    })).filter(d => d.question && d.answer);
-    return data;
-  } catch (err) {
-    console.error(err);
-    return [];
-  }
-}
-
-/* =========================
-   AUTH UI: crear inputs y botones
-   ========================= */
-const authContainer = document.getElementById('authContainer');
-const welcomeFeedback = document.getElementById('welcomeFeedback');
-
-const emailInput = document.createElement('input');
-emailInput.id = 'authEmail';
-emailInput.placeholder = 'Correo electrónico';
-emailInput.type = 'email';
-emailInput.autocomplete = 'username';
-
-const passInput = document.createElement('input');
-passInput.id = 'authPass';
-passInput.placeholder = 'Contraseña';
-passInput.type = 'password';
-passInput.autocomplete = 'current-password';
-
-const btnCreate = document.createElement('button');
-btnCreate.className = 'auth-btn auth-create';
-btnCreate.innerText = 'Crear cuenta';
-
-const btnLogin = document.createElement('button');
-btnLogin.className = 'auth-btn auth-login';
-btnLogin.innerText = 'Iniciar sesión';
-
-authContainer.appendChild(emailInput);
-authContainer.appendChild(passInput);
-const authButtonsDiv = document.createElement('div');
-authButtonsDiv.id = 'authButtons';
-authButtonsDiv.appendChild(btnCreate);
-authButtonsDiv.appendChild(btnLogin);
-authContainer.appendChild(authButtonsDiv);
-
-/* =========================
-   AUTH: Crear / Login / Logout / Session
-   ========================= */
-btnCreate.addEventListener('click', async () => {
-  const email = emailInput.value.trim();
-  const pass = passInput.value.trim();
-  if (!email || !pass) { welcomeFeedback.innerText = 'Completa correo y contraseña.'; return; }
-  try {
-    await createUserWithEmailAndPassword(auth, email, pass);
-    welcomeFeedback.style.color = 'green';
-    welcomeFeedback.innerText = 'Cuenta creada. Inicia sesión.';
-  } catch (err) {
-    welcomeFeedback.style.color = 'red';
-    welcomeFeedback.innerText = 'Error: ' + err.message;
-  }
-});
-
-btnLogin.addEventListener('click', async () => {
-  const email = emailInput.value.trim();
-  const pass = passInput.value.trim();
-  if (!email || !pass) { welcomeFeedback.innerText = 'Completa correo y contraseña.'; return; }
-  try {
-    await signInWithEmailAndPassword(auth, email, pass);
-    welcomeFeedback.innerText = '';
-  } catch (err) {
-    welcomeFeedback.style.color = 'red';
-    welcomeFeedback.innerText = 'Error al iniciar sesión: ' + err.message;
-  }
-});
-
-document.getElementById('logoutBtn').addEventListener('click', async () => {
-  try {
-    await signOut(auth);
-    // onAuthStateChanged limpiará UI
-  } catch (err) {
-    console.error(err);
-  }
-});
-
-/* Al cambiar de sesión */
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    // identificar rol
-    const role = (user.email === CREATOR_EMAIL) ? 'creator' : 'employee';
-    currentUser = { uid: user.uid, email: user.email, role };
-    // log de acceso en Firestore
-    try { await addAccessLogToFirestore(currentUser); } catch(e){ console.error('log access err', e); }
-    // mostrar menú
-    showOptionsMenu();
-  } else {
-    currentUser = null;
-    showLoginScreen();
-  }
-});
-
-/* =========================
-   Firestore Helpers
-   ========================= */
-async function addAccessLogToFirestore(user) {
-  try {
-    await addDoc(collection(db, 'access_logs'), {
-      uid: user.uid,
-      email: user.email,
-      role: user.role,
-      ts: serverTimestamp()
-    });
-  } catch (err) {
-    console.error('Error guardando access_log:', err);
-  }
-}
-
-async function addResultToFirestore(user, result) {
-  // result: { correct, wrong, answered, totalQuestions }
-  try {
-    await addDoc(collection(db, 'results'), {
-      uid: user.uid,
-      email: user.email,
-      role: user.role,
-      correct: result.correct,
-      wrong: result.wrong,
-      answered: result.answered,
-      totalQuestions: result.totalQuestions,
-      ts: serverTimestamp()
-    });
-  } catch (err) {
-    console.error('Error guardando result:', err);
-  }
-}
-
-/* =========================
-   UI: mostrar pantallas
-   ========================= */
-function showLoginScreen() {
-  document.getElementById('welcomeView').style.display = 'block';
-  document.getElementById('optionsMenu').style.display = 'none';
-  document.getElementById('creatorView').style.display = 'none';
-  document.getElementById('quizView').style.display = 'none';
-  welcomeFeedback.style.color = 'red';
-  welcomeFeedback.innerText = 'Inicia sesión o crea una cuenta para continuar.';
-  emailInput.value = '';
-  passInput.value = '';
-}
-
-function showOptionsMenu() {
-  document.getElementById('welcomeView').style.display = 'none';
-  document.getElementById('creatorView').style.display = 'none';
-  document.getElementById('quizView').style.display = 'none';
-  document.getElementById('optionsMenu').style.display = 'block';
-  const welcomeUserMsg = document.getElementById('welcomeUserMsg');
-  welcomeUserMsg.innerText = `¡Hola, ${currentUser.email.split('@')[0]}! ¿Qué deseas hacer?`;
-  // mostrar botón de creador si es admin
-  document.getElementById('panelCreatorBtn').style.display = (currentUser.role === 'creator') ? 'inline-block' : 'none';
-}
-
-/* show creator view */
-document.getElementById('panelCreatorBtn').addEventListener('click', async () => {
-  document.getElementById('welcomeView').style.display = 'none';
-  document.getElementById('quizView').style.display = 'none';
-  document.getElementById('creatorView').style.display = 'block';
-  await loadLogsFromFirestore();
-});
-
-/* volver al menú */
-document.getElementById('backToMenuBtn').addEventListener('click', () => {
-  document.getElementById('creatorView').style.display = 'none';
-  showOptionsMenu();
-});
-
-/* descargar CSV (logs + results) desde Firestore (consulta reciente) */
-document.getElementById('downloadLogBtn').addEventListener('click', async () => {
-  try {
-    // traer últimos 500 logs + últimos 500 resultados
-    const logsQ = query(collection(db, 'access_logs'), orderBy('ts', 'desc'), limit(500));
-    const resultsQ = query(collection(db, 'results'), orderBy('ts', 'desc'), limit(500));
-    const [logsSnap, resultsSnap] = await Promise.all([ getDocs(logsQ), getDocs(resultsQ) ]);
-    const logs = logsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    const results = resultsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-
-    // preparar CSV: combinaremos logs y results por filas separadas
-    const rows = [];
-    rows.push(['Tipo','Fecha','UID','Email','Rol','Correctas','Incorrectas','Contestadas','TotalPreguntas'].join(';'));
-    results.forEach(r => {
-      const date = r.ts && r.ts.toDate ? r.ts.toDate().toLocaleString('es-MX') : '';
-      rows.push(['RESULT', `"${date}"`, `"${r.uid}"`, `"${r.email}"`, `"${r.role}"`, `${r.correct}`, `${r.wrong}`, `${r.answered}`, `${r.totalQuestions}`].join(';'));
-    });
-    logs.forEach(l => {
-      const date = l.ts && l.ts.toDate ? l.ts.toDate().toLocaleString('es-MX') : '';
-      rows.push(['ACCESS', `"${date}"`, `"${l.uid}"`, `"${l.email}"`, `"${l.role}"`, '', '', '', ''].join(';'));
-    });
-
-    const csvContent = '\uFEFF' + rows.join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `MC_logs_${new Date().toISOString().slice(0,10)}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-
-  } catch (err) {
-    alert('Error al descargar registros: ' + err.message);
-  }
-});
-
-/* refresh logs button */
-document.getElementById('refreshLogsBtn').addEventListener('click', loadLogsFromFirestore);
-
-/* carga logs desde Firestore y pinta en UI */
-async function loadLogsFromFirestore() {
-  const list = document.getElementById('logList');
-  list.innerHTML = '<li>Cargando registros...</li>';
-  try {
-    // Traer últimos 200 items (mezclados: results + access)
-    const resultsQ = query(collection(db, 'results'), orderBy('ts', 'desc'), limit(200));
-    const logsQ = query(collection(db, 'access_logs'), orderBy('ts', 'desc'), limit(200));
-    const [resSnap, logSnap] = await Promise.all([ getDocs(resultsQ), getDocs(logsQ) ]);
-
-    const rows = [];
-
-    resSnap.forEach(d => {
-      const r = d.data();
-      rows.push({
-        type: 'RESULT',
-        ts: r.ts,
-        uid: r.uid,
-        email: r.email,
-        role: r.role,
-        text: `Result: ${r.correct}/${r.totalQuestions} (resp: ${r.answered})`
-      });
-    });
-    logSnap.forEach(d => {
-      const r = d.data();
-      rows.push({
-        type: 'ACCESS',
-        ts: r.ts,
-        uid: r.uid,
-        email: r.email,
-        role: r.role,
-        text: 'Access'
-      });
-    });
-
-    // ordenar por ts descendente (usando toMillis si existe)
-    rows.sort((a,b) => {
-      const ta = a.ts && a.ts.toMillis ? a.ts.toMillis() : 0;
-      const tb = b.ts && b.ts.toMillis ? b.ts.toMillis() : 0;
-      return tb - ta;
-    });
-
-    list.innerHTML = '';
-    if (rows.length === 0) {
-      list.innerHTML = '<li>No se han encontrado registros.</li>';
-      return;
-    }
-
-    rows.forEach(entry => {
-      const li = document.createElement('li');
-      const date = entry.ts && entry.ts.toDate ? entry.ts.toDate().toLocaleString('es-MX') : '';
-      li.innerHTML = `
-        <div style="width:100%;">
-          <span class="log-name">${entry.email} ${entry.type === 'RESULT' ? '' : ''}</span>
-          <div class="log-puesto">${entry.role}</div>
-        </div>
-        <span class="log-time">${date}</span>
-        <span class="log-score">${entry.type === 'RESULT' ? entry.text : entry.text}</span>
-      `;
-      list.appendChild(li);
-    });
-
-  } catch (err) {
-    console.error(err);
-    list.innerHTML = '<li>Error al cargar registros.</li>';
-  }
-}
-
-/* =========================
-   QUIZ: lógica principal (igual que antes, con guardado en Firestore)
-   ========================= */
-
-/* cargar preguntas */
-async function loadQuizData() {
-  quizData = await processCSV(QUIZ_CSV_URL);
-  if (quizData.length > 0) {
-    document.getElementById('welcomeFeedback').style.color = 'green';
-    document.getElementById('welcomeFeedback').innerText = 'Preguntas cargadas. Listo.';
-  } else {
-    document.getElementById('welcomeFeedback').style.color = 'red';
-    document.getElementById('welcomeFeedback').innerText = 'Error cargando preguntas (revisa CSV).';
-  }
-}
-
-/* botón iniciar quiz desde menú */
-document.getElementById('startQuizBtn').addEventListener('click', () => {
-  if (!currentUser) { showLoginScreen(); return; }
-  document.getElementById('welcomeView').style.display = 'none';
-  document.getElementById('creatorView').style.display = 'none';
-  document.getElementById('quizView').style.display = 'block';
-  document.getElementById('currentUserName').innerText = `Bienvenido(a), ${currentUser.email.split('@')[0]} | ${currentUser.role}`;
-  resetQuizState();
-}
-
-);
-
-/* reset quiz */
-function resetQuizState() {
-  randomized = shuffle(quizData);
-  currentIndex = 0;
-  correctCount = 0;
-  wrongCount = 0;
-  document.getElementById('startBtn').style.display = 'inline-block';
-  document.getElementById('checkBtn').style.display = 'none';
-  document.getElementById('nextBtn').style.display = 'none';
-  document.getElementById('finishBtn').style.display = 'none';
-  document.getElementById('restartBtn').style.display = 'none';
-  document.getElementById('userAnswer').style.display = 'none';
-  document.getElementById('feedback').style.display = 'none';
-  document.getElementById('section').innerText = 'Presiona "Iniciar" para comenzar';
-  document.getElementById('question').innerText = '';
-  document.getElementById('sourceLine').innerText = '';
-  document.getElementById('progress').innerText = '';
-}
-
-/* mostrar pregunta actual */
-function showCurrent() {
-  if (currentIndex >= randomized.length) return showResults();
-  const item = randomized[currentIndex];
-  document.getElementById('section').innerText = item.section || 'Sin sección';
-  document.getElementById('question').innerText = item.question || 'Sin pregunta';
-  document.getElementById('sourceLine').innerText = item.source ? `Fuente: ${item.source}` : '';
-  document.getElementById('userAnswer').value = '';
-  document.getElementById('userAnswer').style.display = 'block';
-  document.getElementById('feedback').style.display = 'none';
-  document.getElementById('checkBtn').style.display = 'inline-block';
-  document.getElementById('nextBtn').style.display = 'none';
-  document.getElementById('finishBtn').style.display = 'inline-block';
-  updateProgress();
-}
-
-/* actualizar progreso (UI) */
-function updateProgress() {
-  document.getElementById('progress').innerText =
-    `Pregunta ${currentIndex + 1} de ${randomized.length} | ✅ ${correctCount} correctas | ❌ ${wrongCount} incorrectas`;
-}
-
-/* comprobar respuesta */
-function checkAnswer() {
-  const item = randomized[currentIndex];
-  const user = document.getElementById('userAnswer').value;
-  const ok = isSimilar(user, item.answer);
-  const fb = document.getElementById('feedback');
-  fb.style.display = 'block';
-  if (ok) {
-    correctCount++;
-    fb.className = 'feedback correct';
-    fb.innerText = `✅ Correcto.\nFuente: ${item.source || 'Sin fuente'}`;
-  } else {
-    wrongCount++;
-    fb.className = 'feedback incorrect';
-    fb.innerText = `❌ Incorrecto.\nRespuesta esperada: ${item.answer}\nFuente: ${item.source || 'Sin fuente'}`;
-  }
-  document.getElementById('checkBtn').style.display = 'none';
-  document.getElementById('nextBtn').style.display = 'inline-block';
-  updateProgress();
-}
-
-/* mostrar resultados y guardar en Firestore */
-async function showResults() {
-  const totalQuestions = randomized.length;
-  const totalAnswered = correctCount + wrongCount;
-  // Guardar resultado en Firestore para el usuario actual
-  if (currentUser) {
     try {
-      await addResultToFirestore(currentUser, {
-        correct: correctCount,
-        wrong: wrongCount,
-        answered: totalAnswered,
-        totalQuestions
-      });
-    } catch (err) {
-      console.error('No se pudo guardar resultado:', err);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      currentUser = userCredential.user;
+      showQuiz(userCredential.user);
+    } catch (error) {
+      if (error.code === "auth/user-not-found") feedbackMsg.innerText = "Usuario no encontrado";
+      else if (error.code === "auth/wrong-password") feedbackMsg.innerText = "Contraseña incorrecta";
+      else feedbackMsg.innerText = error.message;
     }
+  });
+
+  // --- MOSTRAR CREAR CUENTA ---
+  showCreateBtn.addEventListener('click', () => {
+    createModal.style.display = "flex";
+  });
+  closeModalBtn.addEventListener('click', () => createModal.style.display="none");
+
+  // --- CREAR CUENTA ---
+  createAccountBtn.addEventListener('click', async () => {
+    const name = document.getElementById('newName').value.trim();
+    const puesto = document.getElementById('newPuesto').value.trim();
+    const email = document.getElementById('newEmail').value.trim();
+    const password = document.getElementById('newPassword').value.trim();
+    createFeedback.innerText = "";
+
+    if (!name || !puesto || !email || !password) { createFeedback.innerText="Todos los campos son obligatorios"; return; }
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      currentUser = user;
+
+      // Guardar datos extra en Firestore
+      await setDoc(doc(db, "usuarios", user.uid), { nombre: name, puesto: puesto, email });
+
+      createModal.style.display = "none";
+      showQuiz(user, name, puesto);
+    } catch (error) {
+      if (error.code === "auth/email-already-in-use") createFeedback.innerText = "El correo ya está registrado";
+      else createFeedback.innerText = error.message;
+    }
+  });
+
+  // --- MOSTRAR QUIZ ---
+  function showQuiz(user, name=null, puesto=null) {
+    document.getElementById('loginView').style.display="none";
+    document.getElementById('quizView').style.display="block";
+    const displayName = name || user.displayName || user.email;
+    const displayPuesto = puesto || "";
+    document.getElementById('userDisplay').innerText = `${displayName} - ${displayPuesto}`;
   }
 
-  const pct = totalQuestions ? (correctCount / totalQuestions) : 0;
-  const comment =
-    pct >= 0.9 ? "¡Excelente trabajo! Eres un experto 🍟" :
-    pct >= 0.7 ? "¡Muy bien! Solo unos detalles por pulir 👏" :
-    "Sigue practicando, vas por buen camino 💪";
-
-  document.getElementById('section').innerText = "Resumen final";
-  document.getElementById('question').innerText =
-    `Completaste ${totalAnswered} de ${totalQuestions} preguntas.\n✅ Correctas: ${correctCount}\n❌ Incorrectas: ${wrongCount}`;
-  document.getElementById('sourceLine').innerText = comment;
-  document.getElementById('userAnswer').style.display = 'none';
-  document.getElementById('feedback').style.display = 'none';
-  document.getElementById('checkBtn').style.display = 'none';
-  document.getElementById('nextBtn').style.display = 'none';
-  document.getElementById('finishBtn').style.display = 'none';
-  document.getElementById('restartBtn').style.display = 'inline-block';
-  document.getElementById('progress').innerText = `Tu calificación final: ${correctCount} de ${totalQuestions}.`;
-}
-
-/* =========================
-   EVENTOS UI (botones del quiz)
-   ========================= */
-document.getElementById('startBtn').addEventListener('click', () => {
-  randomized = shuffle(quizData);
-  currentIndex = 0;
-  correctCount = 0;
-  wrongCount = 0;
-  document.getElementById('startBtn').style.display = 'none';
-  showCurrent();
-});
-
-document.getElementById('checkBtn').addEventListener('click', checkAnswer);
-
-document.getElementById('nextBtn').addEventListener('click', () => {
-  currentIndex++;
-  if (currentIndex >= randomized.length) showResults();
-  else showCurrent();
-});
-
-document.getElementById('finishBtn').addEventListener('click', () => {
-  const remaining = randomized.length - (currentIndex + 1);
-  if (remaining > 0) {
-    const confirmEnd = confirm(`¿Seguro que quieres terminar? Aún faltan ${remaining} preguntas.`);
-    if (!confirmEnd) return;
-  }
-  showResults();
-});
-
-document.getElementById('restartBtn').addEventListener('click', resetQuizState);
-
-/* =========================
-   INICIALIZACIÓN
-   ========================= */
-await loadQuizData(); // carga preguntas al iniciar
-
+  // --- CERRAR SESIÓN ---
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    location.reload(); // reinicia la página para logout
+  });
 </script>
 </body>
 </html>
