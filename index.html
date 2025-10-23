@@ -1,50 +1,156 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Guía de Estudio MC</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Guía de estudio a entrenador MC (Firebase)</title>
 <style>
-  body { font-family: 'Poppins', sans-serif; text-align:center; background:#fffdf5; }
-  .card { background:#fff; padding:30px; border-radius:20px; box-shadow:0 6px 25px rgba(0,0,0,0.15); max-width:700px; margin:40px auto; text-align:left; }
-  input { width:80%; max-width:300px; padding:12px; margin:10px auto; border-radius:8px; border:2px solid #ddd; display:block; text-align:center; }
-  button { margin:8px; padding:10px 18px; border:none; border-radius:8px; cursor:pointer; font-weight:700; background:#c8102e; color:#fff; }
-  .secondary { background:#555; }
-  .warning { background:#ffcc00; color:#222; }
-  .green-btn { background:#2e7d32; }
-  #createModal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; }
-  #createModal .modal-content { background:#fff; padding:20px; border-radius:15px; max-width:400px; width:90%; text-align:center; }
-  #feedbackMsg { color:red; margin-top:10px; }
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to bottom right, #fffdf5, #fff);
+    color: #222;
+    text-align: center;
+  }
+  header {
+    background-color: #fff;
+    padding: 20px 0;
+    border-bottom: 4px solid #ffc107;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  }
+  header img { width: 90px; vertical-align: middle; }
+  header h1 { display: inline-block; margin-left: 10px; color: #c8102e; font-size: 1.8rem; vertical-align: middle; }
+  main { padding: 40px 20px; }
+  .card {
+    background: #ffffff;
+    border-radius: 20px;
+    display: inline-block;
+    padding: 30px;
+    width: 90%;
+    max-width: 700px;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+    border-top: 6px solid #ffcc00;
+    text-align: left;
+  }
+  #loginView, #creatorView { text-align: center; }
+  #welcomeTitle { 
+    color: #c8102e; font-size: 2.5rem; font-weight: 900; margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1); 
+  }
+  #loginView input {
+    width: 80%;
+    max-width: 300px;
+    padding: 12px;
+    margin: 10px auto;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    font-size: 1rem;
+    text-align: center;
+    display: block;
+  }
+
+  /* MODAL para Crear Cuenta */
+  #createModal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index: 1000; }
+  #createModal .modal-content { background:#fff; padding:30px; border-radius:15px; max-width:400px; width:90%; text-align:center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+  #createModal input { width: 90%; padding: 10px; margin: 8px auto; border-radius: 6px; border: 1px solid #ccc; }
+  
+  /* Log List Styles */
+  #logList { list-style: none; padding: 0; max-height: 400px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px; margin-top: 20px; }
+  #logList li { padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+  .log-name { font-weight: 600; color: #c8102e; width: 100%; text-align: left; }
+  .log-puesto { font-size: 0.8em; color: #777; width: 100%; text-align: left;}
+  .log-time { font-size: 0.9em; color: #555; order: 3; flex-grow: 1; text-align: right; }
+  .log-score { font-size: 0.9em; color: #2e7d32; font-weight: 700; order: 4; margin-left: 10px; }
+
+  /* Quiz Styles */
+  .meta { text-align:center; margin-bottom: 10px; color:#777; font-size: .95rem }
+  .section { font-weight: 700; color:#c8102e; margin-bottom: 8px; text-align:center; }
+  .question { font-size: 1.2rem; font-weight: 600; color: #222; margin: 12px 0; text-align:center; }
+  .sourceLine { text-align:center; color:#555; font-size:.9rem; margin-bottom:10px; }
+  #userAnswer { width: calc(100% - 30px); padding: 12px; margin: 0 auto; display:block; border-radius:8px; border:2px solid #ddd; font-size:1rem; }
+  .feedback { margin-top: 16px; padding: 14px; border-radius:10px; display:none; white-space:pre-wrap; }
+  .correct { background:#e6ffed; color:#2e7d32; border-left:5px solid #2e7d32; }
+  .incorrect { background:#ffe6e6; color:#b71c1c; border-left:5px solid #b71c1c; }
+  .buttons { text-align:center; margin-top:16px; }
+  button {
+    margin: 8px; background: #c8102e; color: #fff; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-size: .98rem; font-weight: 700;
+  }
+  button.secondary { background:#555; }
+  button.warning { background:#ffcc00; color:#222; }
+  button.green-btn { background:#2e7d32; }
+  button:hover { filter:brightness(.95); }
+  .progress { text-align:center; margin-top:10px; color:#555; font-size:.95rem; }
+  footer { margin-top:30px; padding: 10px; font-size: 0.9rem; color: #555; text-align:center;}
 </style>
 </head>
 <body>
 
-<div class="card">
-  <h2>Bienvenido a la Guía de Estudio MC</h2>
-  <div id="loginView">
-    <input id="emailInput" type="email" placeholder="Correo electrónico">
-    <input id="passwordInput" type="password" placeholder="Contraseña">
-    <button id="loginBtn">Iniciar Sesión</button>
-    <button id="showCreateBtn" class="secondary">Crear Cuenta</button>
-    <p id="feedbackMsg"></p>
-  </div>
+<header>
+  <img src="https://th.bing.com/th/id/R.466663e3e2b9cdbe29c5d4e0721ea9b7?rik=y%2b93vLaQvfidzg&riu=http%3a%2f%2fpngimg.com%2fuploads%2fmcdonalds%2fmcdonalds_PNG9.png&ehk=EcWIjy9En23IUg5CDObkhF0leLXrlb95DXKIAb%2fMM50%3d&risl=&pid=ImgRaw&r=0" alt="Logo" />
+  <h1>Guía de estudio a entrenador MC</h1>
+</header>
 
-  <div id="quizView" style="display:none;">
-    <h3 id="userDisplay"></h3>
-    <p id="section"></p>
-    <p id="question"></p>
-    <input id="userAnswer" type="text" placeholder="Escribe tu respuesta">
-    <div id="feedback" style="display:none;"></div>
-    <div>
-      <button id="checkBtn">Comprobar</button>
-      <button id="nextBtn">Siguiente</button>
-      <button id="finishBtn" class="warning">Terminar</button>
-      <button id="logoutBtn" class="secondary">Cerrar Sesión</button>
+<main>
+  <div class="card">
+    
+    <div id="loginView">
+        <h2 id="welcomeTitle">Acceso a la Guía de Estudio</h2>
+        <p id="promptText">Ingresa tu correo y contraseña:</p>
+        
+        <input id="emailInput" type="email" placeholder="Correo electrónico" autofocus>
+        <input id="passwordInput" type="password" placeholder="Contraseña">
+        
+        <button id="loginBtn">Iniciar Sesión</button>
+        <button id="showCreateBtn" class="secondary">Crear Cuenta</button>
+
+        <p id="feedbackMsg" style="color:red; margin-top:10px;"></p>
+
+        <div id="optionsMenu" style="display:none; margin-top: 20px;">
+            <p id="welcomeUserMsg" style="font-weight: 600;"></p>
+            <button id="startQuizBtn" style="background-color: #ffc107; color: #222;">Iniciar Quiz</button>
+            <button id="panelCreatorBtn" class="secondary" style="display:none;">Panel de Creador</button>
+            <button id="logoutBtn" class="warning" style="background-color: #b71c1c;">Cerrar Sesión</button>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- Modal para Crear Cuenta -->
+    <div id="creatorView" style="display:none;">
+        <h2>Panel de Creador (Firebase Log)</h2>
+        <p>Registro de Calificaciones (Local)</p>
+        <p style="font-size:0.85em; color:red;">
+            ⚠️ **Importante:** Este registro es **LOCAL** (solo visible en este navegador/equipo).
+        </p>
+        <ul id="logList">
+            <li>No hay registros aún.</li>
+        </ul>
+        <button id="downloadLogBtn" class="green-btn">Descargar Log (CSV para Excel)</button>
+        <button id="clearLogBtn" class="warning">Limpiar Registro</button>
+        <button id="backToMenuBtn" class="secondary">Volver al Menú</button>
+    </div>
+    
+    <div id="quizView" style="display:none;">
+        <div class="meta" id="currentUserName"></div> 
+        <div id="section" class="section">Presiona "Iniciar" para comenzar</div>
+        <div id="question" class="question"></div>
+        <div id="sourceLine" class="sourceLine"></div>
+
+        <input id="userAnswer" type="text" placeholder="Escribe tu respuesta aquí..." style="display:none;">
+
+        <div id="feedback" class="feedback"></div>
+
+        <div class="buttons">
+          <button id="startBtn">Iniciar</button>
+          <button id="checkBtn" style="display:none;">Comprobar</button>
+          <button id="nextBtn" style="display:none;">Siguiente</button>
+          <button id="finishBtn" class="warning" style="display:none;">Terminar</button>
+          <button id="restartBtn" class="secondary" style="display:none;">Reiniciar</button>
+        </div>
+
+        <div id="progress" class="progress"></div>
+    </div>
+
+  </div>
+</main>
+
 <div id="createModal">
   <div class="modal-content">
     <h3>Crear Cuenta</h3>
@@ -58,62 +164,235 @@
   </div>
 </div>
 
+<footer>
+  © 2025 Mc | Proyecto de Entrenamiento MC 🍟
+</footer>
+
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+// --- IMPORTAR FIREBASE ---
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyB57-QWSTYwBmbwf5cK0mHVJSYCdkBCxkM",
-    authDomain: "mcantea.firebaseapp.com",
-    projectId: "mcantea",
-    storageBucket: "mcantea.appspot.com",
-    messagingSenderId: "364639775835",
-    appId: "1:364639775835:web:aee974c576c2e4d515237e",
-    measurementId: "G-0BYWEJJ57G"
-  };
+// --- CONFIGURACIÓN DE FIREBASE (¡REEMPLAZA ESTO CON TUS CREDENCIALES!) ---
+const firebaseConfig = {
+    apiKey: "AIzaSyB57-QWSTYwBmbwf5cK0mHVJSYCdkBCxkM",
+    authDomain: "mcantea.firebaseapp.com",
+    projectId: "mcantea",
+    storageBucket: "mcantea.appspot.com",
+    messagingSenderId: "364639775835",
+    appId: "1:364639775835:web:aee974c576c2e4d515237e",
+    measurementId: "G-0BYWEJJ57G"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-  const loginBtn = document.getElementById('loginBtn');
-  const showCreateBtn = document.getElementById('showCreateBtn');
-  const feedbackMsg = document.getElementById('feedbackMsg');
+// --- CONFIGURACIÓN LOCAL (MANTENIDA DEL QUIZ) ---
+const QUIZ_CSV_URL = "https://raw.githubusercontent.com/alexc316/MC/main/Guia_de_entrenamiento_MC.csv"; 
+const CREATOR_EMAIL = "creador@mc.com"; // Nuevo: Creador usa un correo
+const LOG_KEY = "mc_firebase_access_log"; 
 
-  const createModal = document.getElementById('createModal');
-  const createAccountBtn = document.getElementById('createAccountBtn');
-  const closeModalBtn = document.getElementById('closeModalBtn');
-  const createFeedback = document.getElementById('createFeedback');
+// --- VARIABLES GLOBALES ---
+let quizData = [];
+let currentUserData = null; // Almacena {uid, email, nombre, puesto}
+let randomized = [];
+let currentIndex = 0;
+let correctCount = 0;
+let wrongCount = 0;
 
-  let currentUser = null;
+// --- ELEMENTOS DEL DOM ---
+const loginView = document.getElementById('loginView');
+const quizView = document.getElementById('quizView');
+const creatorView = document.getElementById('creatorView');
+const feedbackMsg = document.getElementById('feedbackMsg');
+const optionsMenu = document.getElementById('optionsMenu');
 
-  // --- LOGIN ---
-  loginBtn.addEventListener('click', async () => {
+const createModal = document.getElementById('createModal');
+const createAccountBtn = document.getElementById('createAccountBtn');
+const closeModalBtn = document.getElementById('closeModalBtn');
+const createFeedback = document.getElementById('createFeedback');
+
+// ------------------------------------
+// --- UTILIDADES DEL QUIZ (MANTENIDAS) ---
+// ------------------------------------
+function normalizeText(s) {
+  if (!s) return "";
+  let t = String(s).toLowerCase().trim();
+  t = t.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  t = t.replace(/[^\p{L}\p{N}\s]/gu, '');
+  t = t.replace(/\s+/g, ' ').trim();
+  return t;
+}
+
+function isSimilar(a, b) {
+  const A = normalizeText(a);
+  const B = normalizeText(b);
+  if (!A || !B) return false;
+  if (A === B || A.includes(B) || B.includes(A)) return true;
+  const wordsA = A.split(' ');
+  const wordsB = B.split(' ');
+  const setB = new Set(wordsB);
+  let common = 0;
+  for (const w of wordsA) if (setB.has(w)) common++;
+  return (common / Math.max(wordsA.length, wordsB.length)) >= 0.6;
+}
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+async function processCSV(url) {
+    try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Error al cargar CSV: ${res.statusText}`);
+        const raw = await res.text();
+        const clean = raw.replace(/^\uFEFF/, '').trim();
+        const delimiter = clean.includes(';') ? ';' : ',';
+        
+        const rows = clean.split(/\r?\n/).map(line =>
+            line.split(new RegExp(`${delimiter}(?=(?:(?:[^"]*"){2})*[^"]*$)`)).map(cell => cell.replace(/(^"|"$)/g, '').trim())
+        );
+        
+        const header = rows[0].map(h => h.toLowerCase().replace(/[^a-z0-9_]+/g, '_'));
+        const data = rows.slice(1);
+        
+        const idx = {
+            section: header.findIndex(h => /secci/.test(h)),
+            question: header.findIndex(h => /pregunt/.test(h)),
+            answer: header.findIndex(h => /respuest/.test(h)),
+            source: header.findIndex(h => /fuente|source/.test(h))
+        };
+            
+        return data.map(r => ({
+            section: r[idx.section] || '',
+            question: r[idx.question] || '',
+            answer: r[idx.answer] || '',
+            source: r[idx.source] || ''
+        })).filter(d => d.question && d.answer);
+    } catch (error) {
+        console.error("Error al cargar o procesar el CSV:", error);
+        return [];
+    }
+}
+
+// -------------------------------------------
+// --- LÓGICA DE FIREBASE Y AUTENTICACIÓN ---
+// -------------------------------------------
+
+async function getFirestoreUserData(uid) {
+    const docRef = doc(db, "usuarios", uid);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        return docSnap.data();
+    }
+    return null;
+}
+
+function showLoginScreen() {
+    // Restablecer estados
+    currentUserData = null;
+    document.getElementById('emailInput').value = '';
+    document.getElementById('passwordInput').value = '';
+    feedbackMsg.innerText = '';
+
+    // Mostrar vista de login y ocultar el resto
+    loginView.style.display = 'block';
+    quizView.style.display = 'none';
+    creatorView.style.display = 'none';
+    optionsMenu.style.display = 'none';
+    document.getElementById('loginBtn').style.display = 'inline-block';
+    document.getElementById('showCreateBtn').style.display = 'inline-block';
+}
+
+function showOptionsMenu() {
+    if (!currentUserData) {
+        showLoginScreen();
+        return;
+    }
+
+    // Ocultar campos de login
+    document.getElementById('emailInput').style.display = 'none';
+    document.getElementById('passwordInput').style.display = 'none';
+    document.getElementById('loginBtn').style.display = 'none';
+    document.getElementById('showCreateBtn').style.display = 'none';
+    document.getElementById('promptText').style.display = 'none';
+
+    // Mostrar menú de opciones
+    optionsMenu.style.display = 'block';
+    
+    // Personalizar mensaje
+    const name = currentUserData.nombre || currentUserData.email;
+    document.getElementById('welcomeUserMsg').innerText = `¡Hola, ${name}! ¿Qué deseas hacer?`;
+
+    // Mostrar/Ocultar botón de Creador
+    const isCreator = currentUserData.email === CREATOR_EMAIL;
+    document.getElementById('panelCreatorBtn').style.display = isCreator ? 'inline-block' : 'none';
+}
+
+// --- EVENTO: INICIAR SESIÓN ---
+document.getElementById('loginBtn').addEventListener('click', async () => {
     const email = document.getElementById('emailInput').value.trim();
     const password = document.getElementById('passwordInput').value.trim();
     feedbackMsg.innerText = "";
     if (!email || !password) { feedbackMsg.innerText="Ingresa correo y contraseña"; return; }
 
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      currentUser = userCredential.user;
-      showQuiz(userCredential.user);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        
+        // Cargar datos de Firestore (nombre y puesto)
+        const firestoreData = await getFirestoreUserData(user.uid);
+
+        currentUserData = {
+            uid: user.uid,
+            email: user.email,
+            nombre: firestoreData ? firestoreData.nombre : user.email,
+            puesto: firestoreData ? firestoreData.puesto : 'Usuario sin puesto'
+        };
+
+        showOptionsMenu();
     } catch (error) {
-      if (error.code === "auth/user-not-found") feedbackMsg.innerText = "Usuario no encontrado";
-      else if (error.code === "auth/wrong-password") feedbackMsg.innerText = "Contraseña incorrecta";
-      else feedbackMsg.innerText = error.message;
+        // Manejo de errores de login
+        if (error.code === "auth/user-not-found" || error.code === "auth/invalid-credential") {
+            feedbackMsg.innerText = "Usuario o contraseña incorrecta.";
+        } else if (error.code === "auth/wrong-password") {
+            feedbackMsg.innerText = "Contraseña incorrecta.";
+        } else {
+            feedbackMsg.innerText = "Error al iniciar sesión: " + error.message;
+        }
     }
-  });
+});
 
-  // --- MOSTRAR CREAR CUENTA ---
-  showCreateBtn.addEventListener('click', () => {
+// --- EVENTO: CERRAR SESIÓN ---
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+    try {
+        await signOut(auth);
+        showLoginScreen();
+    } catch (error) {
+        console.error("Error al cerrar sesión:", error);
+    }
+});
+
+// --- MODAL PARA CREAR CUENTA ---
+document.getElementById('showCreateBtn').addEventListener('click', () => {
     createModal.style.display = "flex";
-  });
-  closeModalBtn.addEventListener('click', () => createModal.style.display="none");
+    createFeedback.innerText = "";
+    document.getElementById('newName').value = "";
+    document.getElementById('newPuesto').value = "";
+    document.getElementById('newEmail').value = "";
+    document.getElementById('newPassword').value = "";
+});
+closeModalBtn.addEventListener('click', () => createModal.style.display="none");
 
-  // --- CREAR CUENTA ---
-  createAccountBtn.addEventListener('click', async () => {
+// --- EVENTO: CREAR CUENTA (CON NOMBRE Y PUESTO) ---
+createAccountBtn.addEventListener('click', async () => {
     const name = document.getElementById('newName').value.trim();
     const puesto = document.getElementById('newPuesto').value.trim();
     const email = document.getElementById('newEmail').value.trim();
@@ -121,36 +400,358 @@
     createFeedback.innerText = "";
 
     if (!name || !puesto || !email || !password) { createFeedback.innerText="Todos los campos son obligatorios"; return; }
+    if (password.length < 6) { createFeedback.innerText="La contraseña debe tener al menos 6 caracteres"; return; }
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      currentUser = user;
+        // 1. Crear usuario en Authentication
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        
+        // 2. Guardar datos extra en Firestore
+        await setDoc(doc(db, "usuarios", user.uid), { nombre: name, puesto: puesto, email: email });
 
-      // Guardar datos extra en Firestore
-      await setDoc(doc(db, "usuarios", user.uid), { nombre: name, puesto: puesto, email });
+        // Establecer datos del usuario actual
+        currentUserData = { uid: user.uid, email: user.email, nombre: name, puesto: puesto };
 
-      createModal.style.display = "none";
-      showQuiz(user, name, puesto);
+        createModal.style.display = "none";
+        showOptionsMenu();
     } catch (error) {
-      if (error.code === "auth/email-already-in-use") createFeedback.innerText = "El correo ya está registrado";
-      else createFeedback.innerText = error.message;
+        // Manejo de errores de creación de cuenta
+        if (error.code === "auth/email-already-in-use") {
+            createFeedback.innerText = "El correo ya está registrado. Intenta iniciar sesión.";
+        } else if (error.code === "auth/weak-password") {
+            createFeedback.innerText = "Contraseña débil. Debe tener al menos 6 caracteres.";
+        } else {
+            createFeedback.innerText = "Error al crear cuenta: " + error.message;
+        }
     }
-  });
+});
 
-  // --- MOSTRAR QUIZ ---
-  function showQuiz(user, name=null, puesto=null) {
-    document.getElementById('loginView').style.display="none";
-    document.getElementById('quizView').style.display="block";
-    const displayName = name || user.displayName || user.email;
-    const displayPuesto = puesto || "";
-    document.getElementById('userDisplay').innerText = `${displayName} - ${displayPuesto}`;
+
+// ------------------------------------------------
+// --- LÓGICA DEL QUIZ Y CREADOR (ADAPTADA) ---
+// ------------------------------------------------
+
+function logAccess(score, total) {
+    let log = [];
+    try {
+        log = JSON.parse(localStorage.getItem(LOG_KEY)) || [];
+    } catch (e) {
+        console.error("Error al parsear el log de accesos", e);
+        log = [];
+    }
+
+    const newEntry = {
+        email: currentUserData.email,
+        name: currentUserData.nombre, 
+        puesto: currentUserData.puesto,
+        time: new Date().toISOString(),
+        score: score,
+        total: total
+    };
+
+    log.unshift(newEntry); 
+    if (log.length > 100) log.pop(); 
+    localStorage.setItem(LOG_KEY, JSON.stringify(log));
+}
+
+function showCreatorView() {
+    loginView.style.display = 'none';
+    quizView.style.display = 'none';
+    creatorView.style.display = 'block';
+    loadLogList();
+}
+
+function loadLogList() {
+    const logList = document.getElementById('logList');
+    let log = [];
+    try {
+        log = JSON.parse(localStorage.getItem(LOG_KEY)) || [];
+    } catch (e) {
+        log = [];
+    }
+    
+    logList.innerHTML = '';
+    
+    if (log.length === 0) {
+        logList.innerHTML = '<li>No se ha registrado ningún acceso.</li>';
+        return;
+    }
+    
+    log.forEach(entry => {
+        const li = document.createElement('li');
+        const date = new Date(entry.time).toLocaleString('es-MX', {
+            year: 'numeric', month: 'short', day: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
+        
+        const scoreText = entry.score !== undefined ? `${entry.score}/${entry.total}` : 'N/A';
+        const scoreColor = entry.score / entry.total >= 0.7 ? '#2e7d32' : '#b71c1c';
+
+        li.innerHTML = `<div style="width: 100%;">
+                <span class="log-name">${entry.name} (${entry.email})</span>
+                <div class="log-puesto">${entry.puesto}</div>
+            </div>
+            <span class="log-time">${date}</span>
+            <span class="log-score" style="color: ${scoreColor};">${scoreText}</span>
+        `;
+        logList.appendChild(li);
+    });
+}
+
+function clearLog() {
+    if (confirm("¿Estás seguro de que quieres ELIMINAR el registro de accesos en ESTE NAVEGADOR? Esta acción es irreversible.")) {
+        localStorage.removeItem(LOG_KEY);
+        loadLogList();
+    }
+}
+
+function exportLogToCSV() {
+    let log = [];
+    try {
+        log = JSON.parse(localStorage.getItem(LOG_KEY)) || [];
+    } catch (e) {
+        alert("Error al leer el registro local.");
+        return;
+    }
+
+    if (log.length === 0) {
+        alert("El registro está vacío. No hay nada para descargar.");
+        return;
+    }
+    
+    const headers = ["Fecha y Hora", "Correo", "Nombre del Empleado", "Puesto", "Correctas", "Total Preguntas", "Calificacion (%)"];
+    
+    const csvRows = log.map(entry => {
+        const date = new Date(entry.time).toLocaleString('es-MX', {
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit', second: '2-digit'
+        }).replace(/,/g, ''); 
+        
+        const percentage = entry.total > 0 ? ((entry.score / entry.total) * 100).toFixed(2) : '0.00';
+
+        return [
+            `"${date}"`,
+            `"${entry.email}"`,
+            `"${entry.name.replace(/"/g, '""')}"`, 
+            `"${entry.puesto.replace(/"/g, '""')}"`,
+            `"${entry.score}"`,
+            `"${entry.total}"`,
+            `"${percentage}%"`
+        ].join(';'); 
+    });
+    
+    const csvContent = [
+        headers.join(';'),
+        ...csvRows
+    ].join('\n');
+
+    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `Registro_MC_${new Date().toISOString().slice(0, 10)}.csv`);
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function showQuizView() {
+    if (!currentUserData) {
+        showLoginScreen();
+        return;
+    }
+
+    loginView.style.display = 'none';
+    creatorView.style.display = 'none';
+    quizView.style.display = 'block';
+    
+    // Muestra nombre y puesto en el quiz
+    document.getElementById('currentUserName').innerText = 
+        `Bienvenido(a), ${currentUserData.nombre} - ${currentUserData.puesto} | ${currentUserData.email}`;
+
+    resetQuizState();
+}
+
+function resetQuizState() {
+  randomized = shuffle(quizData);
+  currentIndex = 0;
+  correctCount = 0;
+  wrongCount = 0;
+  document.getElementById('startBtn').style.display = 'inline-block';
+  document.getElementById('checkBtn').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('finishBtn').style.display = 'none';
+  document.getElementById('restartBtn').style.display = 'none';
+  document.getElementById('userAnswer').style.display = 'none';
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('section').innerText = 'Presiona "Iniciar" para comenzar';
+  document.getElementById('question').innerText = '';
+  document.getElementById('sourceLine').innerText = '';
+  document.getElementById('progress').innerText = '';
+}
+
+function showCurrent() {
+  if (currentIndex >= randomized.length) return showResults();
+  const item = randomized[currentIndex];
+  document.getElementById('section').innerText = item.section;
+  document.getElementById('question').innerText = item.question;
+  document.getElementById('sourceLine').innerText = item.source ? `Fuente: ${item.source}` : '';
+  document.getElementById('userAnswer').value = '';
+  document.getElementById('userAnswer').style.display = 'block';
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('checkBtn').style.display = 'inline-block';
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('finishBtn').style.display = 'inline-block';
+  updateProgress();
+}
+
+function updateProgress() {
+  document.getElementById('progress').innerText =
+    `Pregunta ${currentIndex + 1} de ${randomized.length} | ✅ ${correctCount} correctas | ❌ ${wrongCount} incorrectas`;
+}
+
+function checkAnswer() {
+  const item = randomized[currentIndex];
+  const user = document.getElementById('userAnswer').value;
+  const ok = isSimilar(user, item.answer);
+  const fb = document.getElementById('feedback');
+  fb.style.display = 'block';
+  if (ok) {
+    correctCount++;
+    fb.className = 'feedback correct';
+    fb.innerText = `✅ Correcto.\nRespuesta: ${item.answer}\nFuente: ${item.source || 'Sin fuente'}`;
+  } else {
+    wrongCount++;
+    fb.className = 'feedback incorrect';
+    fb.innerText = `❌ Incorrecto.\nRespuesta Correcta: ${item.answer}\nFuente: ${item.source || 'Sin fuente'}`;
+  }
+  document.getElementById('checkBtn').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+  updateProgress();
+}
+
+function showResults() {
+  const totalQuestions = randomized.length;
+  const totalAnswered = correctCount + wrongCount;
+  const percentage = correctCount / totalQuestions;
+  
+  if(currentUserData) {
+      // Registrar en LocalStorage
+      logAccess(correctCount, totalQuestions);
   }
 
-  // --- CERRAR SESIÓN ---
-  document.getElementById('logoutBtn').addEventListener('click', () => {
-    location.reload(); // reinicia la página para logout
-  });
+  const comment =
+    percentage >= 0.9
+      ? "¡Excelente trabajo! Eres un experto 🍟"
+      : percentage >= 0.7
+      ? "¡Muy bien! Solo unos detalles por pulir 👏"
+      : "Sigue practicando, vas por buen camino 💪";
+
+  document.getElementById('section').innerText = "Resumen final";
+  document.getElementById('question').innerText =
+    `Completaste ${totalAnswered} de ${totalQuestions} preguntas.\n✅ Correctas: ${correctCount}\n❌ Incorrectas: ${wrongCount}`;
+  document.getElementById('sourceLine').innerText = comment;
+  document.getElementById('userAnswer').style.display = 'none';
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('checkBtn').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('finishBtn').style.display = 'none';
+  document.getElementById('restartBtn').style.display = 'inline-block';
+  document.getElementById('progress').innerText = `Tu calificación final: ${correctCount} de ${totalQuestions}.`;
+}
+
+// ------------------------------------
+// --- EVENT LISTENERS DEL QUIZ/MENU ---
+// ------------------------------------
+
+document.getElementById('startQuizBtn').addEventListener('click', showQuizView);
+document.getElementById('panelCreatorBtn').addEventListener('click', showCreatorView);
+
+document.getElementById('backToMenuBtn').addEventListener('click', () => {
+    creatorView.style.display = 'none';
+    showOptionsMenu();
+});
+
+document.getElementById('clearLogBtn').addEventListener('click', clearLog);
+document.getElementById('downloadLogBtn').addEventListener('click', exportLogToCSV); 
+
+document.getElementById('startBtn').addEventListener('click', () => {
+  randomized = shuffle(quizData);
+  currentIndex = 0;
+  correctCount = 0;
+  wrongCount = 0;
+  document.getElementById('startBtn').style.display = 'none';
+  showCurrent();
+});
+
+document.getElementById('checkBtn').addEventListener('click', checkAnswer);
+
+document.getElementById('nextBtn').addEventListener('click', () => {
+  currentIndex++;
+  if (currentIndex >= randomized.length) showResults();
+  else showCurrent();
+});
+
+document.getElementById('finishBtn').addEventListener('click', () => {
+  const remaining = randomized.length - (currentIndex + 1);
+  if (remaining > 0) {
+    const confirmEnd = confirm(`¿Seguro que quieres terminar? Aún faltan ${remaining} preguntas.`);
+    if (!confirmEnd) return;
+  }
+  showResults();
+});
+
+document.getElementById('restartBtn').addEventListener('click', showQuizView); // Vuelve a la pantalla de bienvenida del Quiz
+
+// ------------------------------------
+// --- INICIO DE LA APLICACIÓN ---
+// ------------------------------------
+
+async function initApp() {
+    // 1. Cargar datos del quiz
+    document.getElementById('feedbackMsg').innerText = "Cargando datos del quiz...";
+    quizData = await processCSV(QUIZ_CSV_URL);
+    
+    if (quizData.length > 0) {
+         document.getElementById('feedbackMsg').innerText = "Datos cargados. Inicia sesión para comenzar. 🚀";
+         document.getElementById('loginBtn').disabled = false;
+         document.getElementById('showCreateBtn').disabled = false;
+    } else {
+         document.getElementById('feedbackMsg').innerText = "ERROR: No se pudo cargar la data del quiz. Revisa la URL del CSV.";
+         document.getElementById('loginBtn').disabled = true;
+         document.getElementById('showCreateBtn').disabled = true;
+    }
+
+    // 2. Verificar si hay sesión activa de Firebase al cargar la página
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            // Usuario logueado, cargar sus datos
+            const firestoreData = await getFirestoreUserData(user.uid);
+            
+            currentUserData = {
+                uid: user.uid,
+                email: user.email,
+                nombre: firestoreData ? firestoreData.nombre : user.email,
+                puesto: firestoreData ? firestoreData.puesto : 'Usuario sin puesto'
+            };
+            
+            // Si el quiz ya cargó, mostrar menú de opciones
+            if (quizData.length > 0) {
+                showOptionsMenu();
+            } else {
+                // Mostrar mensaje de carga hasta que quizData esté lista
+                document.getElementById('feedbackMsg').innerText = "Datos del Quiz pendientes. Espera...";
+            }
+        } else {
+            // No hay usuario, mostrar pantalla de login
+            showLoginScreen();
+        }
+    });
+}
+
+initApp();
 </script>
 </body>
 </html>
