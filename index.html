@@ -30,7 +30,7 @@
     display: inline-block;
     padding: 30px;
     width: 90%;
-    max-width: 700px;
+    max-width: 900px;
     box-shadow: 0 6px 25px rgba(0,0,0,0.15);
     border-top: 6px solid #ffcc00;
     text-align: left;
@@ -43,24 +43,29 @@
   
   /* ESTÉTICA: Título de bienvenida grande y rojo */
   #welcomeTitle { 
-    color: #c8102e; /* McDonald's Red */
+    color: #c8102e; 
     margin-bottom: 20px; 
-    font-size: 2.5rem; 
+    font-size: 2.2rem; 
     font-weight: 900; 
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1); 
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.06); 
   }
 
   #welcomeView input {
     width: 80%;
-    max-width: 300px;
+    max-width: 320px;
     padding: 12px;
-    margin: 10px auto;
+    margin: 8px auto;
     border-radius: 8px;
     border: 2px solid #ddd;
     font-size: 1rem;
     text-align: center;
     display: block;
   }
+
+  #authButtons { margin-top: 6px; }
+  .auth-btn { margin: 6px; padding: 10px 18px; border-radius:8px; font-weight:700; cursor:pointer; border:none; }
+  .auth-create { background:#2e7d32; color:white; }
+  .auth-login { background:#c8102e; color:white; }
 
   /* Estilo para el log del creador */
   #logList {
@@ -80,14 +85,11 @@
       align-items: center;
       flex-wrap: wrap; 
   }
-  #logList li:last-child {
-      border-bottom: none;
-  }
-  .log-name { font-weight: 600; color: #c8102e; width: 100%; text-align: left; }
-  .log-puesto { font-size: 0.8em; color: #777; width: 100%; text-align: left;}
-  .log-time { font-size: 0.9em; color: #555; order: 3; flex-grow: 1; text-align: right; }
-  .log-score { font-size: 0.9em; color: #2e7d32; font-weight: 700; order: 4; margin-left: 10px; }
-
+  #logList li:last-child { border-bottom: none; }
+  .log-name { font-weight: 600; color: #c8102e; width: 100%; text-align:left; }
+  .log-puesto { font-size: 0.85em; color: #777; width: 100%; text-align:left; }
+  .log-time { font-size: 0.85em; color: #555; text-align:right; }
+  .log-score { font-size: 0.9em; color: #2e7d32; font-weight:700; margin-left: 10px; }
 
   /* Estilos del quiz (ya existentes) */
   .meta { text-align:center; margin-bottom: 10px; color:#777; font-size: .95rem }
@@ -120,10 +122,12 @@
   }
   button.secondary { background:#555; }
   button.warning { background:#ffcc00; color:#222; }
-  button.green-btn { background:#2e7d32; } /* Nuevo estilo para botón de descargar */
+  button.green-btn { background:#2e7d32; } /* Nuevo estilo */
   button:hover { filter:brightness(.95); }
   .progress { text-align:center; margin-top:10px; color:#555; font-size:.95rem; }
+
   footer { margin-top:30px; padding: 10px; font-size: 0.9rem; color: #555; text-align:center;}
+  .small { font-size:0.9rem; color:#666; }
 </style>
 </head>
 <body>
@@ -136,40 +140,40 @@
 <main>
   <div class="card">
     
+    <!-- WELCOME / AUTH -->
     <div id="welcomeView">
         <h2 id="welcomeTitle">Bienvenido a la Guía de Estudio</h2>
-        <p id="promptText">Por favor, ingresa tu número de empleado para comenzar:</p>
-        <input id="employeeNumber" type="number" placeholder="Ej: 156372" autofocus>
-        
-        <div id="creatorPasswordContainer" style="display:none; margin-top: 10px;">
-            <input id="creatorPassword" type="password" placeholder="Contraseña de Creador" style="display: block; width: 80%; max-width: 300px; margin: 10px auto; padding: 12px; border-radius: 8px; border: 2px solid #ddd; font-size: 1rem; text-align: center;">
-        </div>
-        
-        <button id="accessBtn">Acceder</button>
+        <p id="promptText" class="small">Crea una cuenta o inicia sesión con correo y contraseña.</p>
+
+        <!-- Aquí se inyectan inputs de auth desde JS (email / pass / botones) -->
+        <div id="authContainer" style="margin-top: 6px;"></div>
+
         <p id="welcomeFeedback" style="color:red; margin-top:10px;"></p>
 
         <div id="optionsMenu" style="display:none; margin-top: 20px;">
             <p id="welcomeUserMsg" style="font-weight: 600;"></p>
             <button id="startQuizBtn" style="background-color: #ffc107; color: #222;">Iniciar Quiz</button>
             <button id="panelCreatorBtn" class="secondary" style="display:none;">Panel de Creador</button>
-            <button id="logoutBtn" class="warning" style="background-color: #b71c1c;">Cambiar de Usuario</button>
+            <button id="logoutBtn" class="warning" style="background-color: #b71c1c;">Cerrar sesión</button>
         </div>
     </div>
 
+    <!-- CREATOR PANEL -->
     <div id="creatorView" style="display:none;">
-        <h2>Panel de Creador (156372 - Alexis)</h2>
-        <p>Registro de Accesos y Calificaciones (Local)</p>
-        <p style="font-size:0.85em; color:red;">
-            ⚠️ **Importante:** Este registro es **LOCAL** (solo visible en este navegador/equipo).
-        </p>
+        <h2>Panel de Creador (Admin)</h2>
+        <p>Registros (accesos y resultados) desde Firestore</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+          <button id="refreshLogsBtn" class="secondary">Actualizar</button>
+          <button id="downloadLogBtn" class="green-btn">Descargar CSV</button>
+          <button id="backToMenuBtn" class="secondary">Volver al Menú</button>
+        </div>
+
         <ul id="logList">
             <li>No hay registros aún.</li>
         </ul>
-        <button id="downloadLogBtn" class="green-btn">Descargar Log (CSV para Excel)</button>
-        <button id="clearLogBtn" class="warning">Limpiar Registro</button>
-        <button id="backToMenuBtn" class="secondary">Volver al Menú</button>
     </div>
     
+    <!-- QUIZ VIEW -->
     <div id="quizView" style="display:none;">
         <div class="meta" id="currentUserName"></div> 
         <div id="section" class="section">Presiona "Iniciar" para comenzar</div>
@@ -195,28 +199,69 @@
 </main>
 
 <footer>
-  © 2025 Mc creador empleado 156372 Alexis Calderon | Proyecto de Entrenamiento MC 🍟
+  © 2025 Mc creador | Proyecto de Entrenamiento MC 🍟
 </footer>
 
-<script>
-// --- CONFIGURACIÓN ---
-const QUIZ_CSV_URL = "https://raw.githubusercontent.com/alexc316/MC/main/Guia_de_entrenamiento_MC.csv"; 
-const EMPLOYEES_CSV_URL = "https://raw.githubusercontent.com/alexc316/MC/main/empleados_MC.csv"; 
-const CREATOR_ID = "156372";
-const CREATOR_PASS = "a123alex";
-const LOG_KEY = "mc_access_log"; 
+<!-- FIREBASE + APP LOGIC -->
+<script type="module">
+/* =========================
+   CONFIG — FIREBASE SDK
+   ========================= */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-analytics.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  setDoc,
+  doc,
+  serverTimestamp,
+  query,
+  orderBy,
+  getDocs,
+  limit
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-// --- VARIABLES GLOBALES DEL QUIZ ---
+/* --- Tu configuración (la que compartiste) --- */
+const firebaseConfig = {
+  apiKey: "AIzaSyB57-QWSTYwBmbwf5cK0mHVJSYCdkBCxkM",
+  authDomain: "mcantea.firebaseapp.com",
+  projectId: "mcantea",
+  storageBucket: "mcantea.firebasestorage.app",
+  messagingSenderId: "364639775835",
+  appId: "1:364639775835:web:aee974c576c2e4d515237e",
+  measurementId: "G-0BYWEJJ57G"
+};
+
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* --- Admin (Creador) --- */
+const CREATOR_EMAIL = "alexis@mc.com";
+const CREATOR_PASS = "a123alex"; // la contraseña que dijiste
+
+/* =========================
+   APP: Variables y util
+   ========================= */
+const QUIZ_CSV_URL = "https://raw.githubusercontent.com/alexc316/MC/main/Guia_de_entrenamiento_MC.csv";
+
 let quizData = [];
-let employeesData = {};
-let currentEmployee = null;
 let randomized = [];
 let currentIndex = 0;
 let correctCount = 0;
 let wrongCount = 0;
+let currentUser = null; // { uid, email, role }
 
-// --- UTILERÍAS ---
-
+/* ---------- UTIL ---------- */
 function normalizeText(s) {
   if (!s) return "";
   let t = String(s).toLowerCase().trim();
@@ -225,7 +270,6 @@ function normalizeText(s) {
   t = t.replace(/\s+/g, ' ').trim();
   return t;
 }
-
 function isSimilar(a, b) {
   const A = normalizeText(a);
   const B = normalizeText(b);
@@ -238,7 +282,6 @@ function isSimilar(a, b) {
   for (const w of wordsA) if (setB.has(w)) common++;
   return (common / Math.max(wordsA.length, wordsB.length)) >= 0.6;
 }
-
 function shuffle(arr) {
   const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -248,329 +291,338 @@ function shuffle(arr) {
   return a;
 }
 
-/** Procesa el texto CSV y devuelve un array de objetos o un objeto de empleados */
-async function processCSV(url, keyColumn = null) {
-    try {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`Error al cargar CSV: ${res.statusText}`);
-        const raw = await res.text();
-        const clean = raw.replace(/^\uFEFF/, '').trim();
-        const delimiter = clean.includes(';') ? ';' : ',';
-        
-        const rows = clean.split(/\r?\n/).map(line =>
-            line.split(new RegExp(`${delimiter}(?=(?:(?:[^"]*"){2})*[^"]*$)`)).map(cell => cell.replace(/(^"|"$)/g, '').trim())
-        );
-        
-        const header = rows[0].map(h => h.toLowerCase().replace(/[^a-z0-9_]+/g, '_'));
-        const data = rows.slice(1);
-        
-        if (keyColumn) {
-            // Caso Empleados: Retorna un objeto mapeado por el valor de la columna clave
-            const keyIndex = header.findIndex(h => h === keyColumn.toLowerCase().replace(/[^a-z0-9_]+/g, '_'));
-            if (keyIndex === -1) throw new Error(`Columna clave '${keyColumn}' no encontrada en el CSV.`);
-            
-            const result = {};
-            data.forEach(row => {
-                const key = row[keyIndex];
-                if (key) {
-                    const item = {};
-                    header.forEach((h, i) => { item[h] = row[i] || ''; });
-                    result[key] = item;
-                }
-            });
-            return result;
-        } else {
-            // Caso Quiz: Retorna un array de objetos de preguntas
-            const idx = {
-                section: header.findIndex(h => /secci/.test(h)),
-                question: header.findIndex(h => /pregunt/.test(h)),
-                answer: header.findIndex(h => /respuest/.test(h)),
-                source: header.findIndex(h => /fuente|source/.test(h))
-            };
-            
-            return data.map(r => ({
-                section: r[idx.section] || '',
-                question: r[idx.question] || '',
-                answer: r[idx.answer] || '',
-                source: r[idx.source] || ''
-            })).filter(d => d.question && d.answer);
-        }
-    } catch (error) {
-        console.error("Error al cargar o procesar el CSV:", error);
-        return keyColumn ? {} : [];
-    }
-}
-
-
-// --- LÓGICA DE CARGA DE DATOS ---
-
-async function loadData() {
-    const [quiz, employees] = await Promise.all([
-        processCSV(QUIZ_CSV_URL),
-        processCSV(EMPLOYEES_CSV_URL, 'no_empleado')
-    ]);
-
-    quizData = quiz;
-    employeesData = employees;
-    
-    if (quizData.length > 0 && Object.keys(employeesData).length > 0) {
-         document.getElementById('welcomeFeedback').innerText = "Datos cargados. ¡Listo para iniciar! 🚀";
-         document.getElementById('accessBtn').disabled = false;
-    } else {
-         document.getElementById('welcomeFeedback').innerText = "ERROR: No se pudo cargar la data del quiz o de empleados. Revisa las URLs de los CSV.";
-         document.getElementById('accessBtn').disabled = true;
-    }
-}
-
-// --- LÓGICA DE ACCESO Y REGISTRO ---
-
-function handleAccess() {
-    const num = document.getElementById('employeeNumber').value.trim();
-    const fb = document.getElementById('welcomeFeedback');
-    const passInput = document.getElementById('creatorPassword');
-    
-    fb.innerText = "";
-    currentEmployee = null; // Reiniciar por si acaso
-
-    if (!num) {
-        fb.innerText = "Por favor, ingresa tu número de empleado.";
-        return;
-    }
-    
-    // 1. Validar al Creador
-    if (num === CREATOR_ID) {
-        if (passInput.value.trim() === CREATOR_PASS) {
-            // Creador validado
-            currentEmployee = employeesData[num];
-            showOptionsMenu(true); // Mostrar menú con opción de Creador
-            return;
-        } else {
-            fb.innerText = "Contraseña incorrecta para el Creador.";
-            passInput.value = '';
-            return;
-        }
-    }
-    
-    // 2. Validar Empleado Normal
-    const employee = employeesData[num];
-    if (employee) {
-        // Empleado validado
-        currentEmployee = employee;
-        showOptionsMenu(false); // Mostrar menú sin opción de Creador
-    } else {
-        fb.innerText = "Número de empleado no encontrado. Intenta de nuevo.";
-    }
-}
-
-function showOptionsMenu(isCreator) {
-    const numInput = document.getElementById('employeeNumber');
-    const passContainer = document.getElementById('creatorPasswordContainer');
-    const accBtn = document.getElementById('accessBtn');
-    const menu = document.getElementById('optionsMenu');
-    const panelBtn = document.getElementById('panelCreatorBtn');
-    const promptText = document.getElementById('promptText');
-    const welcomeMsg = document.getElementById('welcomeUserMsg');
-
-    // Ocultar campos de acceso
-    numInput.style.display = 'none';
-    passContainer.style.display = 'none';
-    accBtn.style.display = 'none';
-    promptText.style.display = 'none';
-    
-    // Mostrar opciones
-    menu.style.display = 'block';
-    
-    // Personalizar mensaje y opciones
-    if (currentEmployee) {
-        welcomeMsg.innerText = `¡Hola, ${currentEmployee.nombre_del_empleado}! ¿Qué deseas hacer?`;
-    }
-
-    if (isCreator) {
-        panelBtn.style.display = 'inline-block';
-    } else {
-        panelBtn.style.display = 'none';
-    }
-}
-
-function showLoginScreen() {
-    // Mostrar campos de acceso
-    document.getElementById('employeeNumber').style.display = 'block';
-    document.getElementById('creatorPasswordContainer').style.display = 'none';
-    document.getElementById('creatorPassword').value = '';
-    document.getElementById('accessBtn').style.display = 'inline-block';
-    document.getElementById('promptText').style.display = 'block';
-    document.getElementById('employeeNumber').value = '';
-
-    // Ocultar vistas y menú
-    document.getElementById('optionsMenu').style.display = 'none';
-    document.getElementById('creatorView').style.display = 'none';
-    document.getElementById('quizView').style.display = 'none';
-    document.getElementById('welcomeView').style.display = 'block';
-
-    currentEmployee = null;
-    document.getElementById('welcomeFeedback').innerText = "Vuelve a ingresar tu número de empleado.";
-}
-
-
-// LÓGICA: Muestra/Oculta el campo de contraseña si es el Creador
-function checkCreatorId() {
-    const num = document.getElementById('employeeNumber').value.trim();
-    const passContainer = document.getElementById('creatorPasswordContainer');
-    const passInput = document.getElementById('creatorPassword');
-    
-    if (num === CREATOR_ID) {
-        passContainer.style.display = 'block';
-    } else {
-        passContainer.style.display = 'none';
-        passInput.value = ''; 
-    }
-}
-
-function logAccess(employee, score, total) {
-    let log = [];
-    try {
-        log = JSON.parse(localStorage.getItem(LOG_KEY)) || [];
-    } catch (e) {
-        console.error("Error al parsear el log de accesos", e);
-        log = [];
-    }
-
-    const newEntry = {
-        id: employee.no_empleado,
-        name: employee.nombre_del_empleado, 
-        puesto: employee.puesto,
-        time: new Date().toISOString(),
-        score: score,
-        total: total
+/* =========================
+   CARGA CSV DE PREGUNTAS
+   ========================= */
+async function processCSV(url) {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('No se pudo obtener el CSV');
+    const raw = await res.text();
+    const clean = raw.replace(/^\uFEFF/, '').trim();
+    const delimiter = clean.includes(';') ? ';' : ',';
+    const rows = clean.split(/\r?\n/).map(line =>
+      line.split(new RegExp(`${delimiter}(?=(?:(?:[^"]*"){2})*[^"]*$)`)).map(cell => cell.replace(/(^"|"$)/g, '').trim())
+    ).filter(r => r.length);
+    const header = rows[0].map(h => h.toLowerCase());
+    const idx = {
+      section: header.findIndex(h => /secci/.test(h)),
+      question: header.findIndex(h => /pregunt/.test(h)),
+      answer: header.findIndex(h => /respuest/.test(h)),
+      source: header.findIndex(h => /fuente|source/.test(h))
     };
-
-    log.unshift(newEntry); 
-    if (log.length > 100) log.pop(); 
-    localStorage.setItem(LOG_KEY, JSON.stringify(log));
+    const data = rows.slice(1).map(r => ({
+      section: r[idx.section] || '',
+      question: r[idx.question] || '',
+      answer: r[idx.answer] || '',
+      source: r[idx.source] || ''
+    })).filter(d => d.question && d.answer);
+    return data;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
 }
 
-function showCreatorView() {
-    document.getElementById('welcomeView').style.display = 'none';
-    document.getElementById('quizView').style.display = 'none';
-    document.getElementById('creatorView').style.display = 'block';
-    loadLogList();
-}
+/* =========================
+   AUTH UI: crear inputs y botones
+   ========================= */
+const authContainer = document.getElementById('authContainer');
+const welcomeFeedback = document.getElementById('welcomeFeedback');
 
-function loadLogList() {
-    const logList = document.getElementById('logList');
-    let log = [];
-    try {
-        log = JSON.parse(localStorage.getItem(LOG_KEY)) || [];
-    } catch (e) {
-        log = [];
-    }
-    
-    logList.innerHTML = '';
-    
-    if (log.length === 0) {
-        logList.innerHTML = '<li>No se ha registrado ningún acceso.</li>';
-        return;
-    }
-    
-    log.forEach(entry => {
-        const li = document.createElement('li');
-        const date = new Date(entry.time).toLocaleString('es-MX', {
-            year: 'numeric', month: 'short', day: 'numeric',
-            hour: '2-digit', minute: '2-digit'
-        });
-        
-        const scoreText = entry.score !== undefined ? `${entry.score}/${entry.total}` : 'N/A';
-        const scoreColor = entry.score / entry.total >= 0.7 ? '#2e7d32' : '#b71c1c';
+const emailInput = document.createElement('input');
+emailInput.id = 'authEmail';
+emailInput.placeholder = 'Correo electrónico';
+emailInput.type = 'email';
+emailInput.autocomplete = 'username';
 
-        li.innerHTML = `
-            <div style="width: 100%;">
-                <span class="log-name">${entry.name} (${entry.id})</span>
-                <div class="log-puesto">${entry.puesto}</div>
-            </div>
-            <span class="log-time">${date}</span>
-            <span class="log-score" style="color: ${scoreColor};">${scoreText}</span>
-        `;
-        logList.appendChild(li);
+const passInput = document.createElement('input');
+passInput.id = 'authPass';
+passInput.placeholder = 'Contraseña';
+passInput.type = 'password';
+passInput.autocomplete = 'current-password';
+
+const btnCreate = document.createElement('button');
+btnCreate.className = 'auth-btn auth-create';
+btnCreate.innerText = 'Crear cuenta';
+
+const btnLogin = document.createElement('button');
+btnLogin.className = 'auth-btn auth-login';
+btnLogin.innerText = 'Iniciar sesión';
+
+authContainer.appendChild(emailInput);
+authContainer.appendChild(passInput);
+const authButtonsDiv = document.createElement('div');
+authButtonsDiv.id = 'authButtons';
+authButtonsDiv.appendChild(btnCreate);
+authButtonsDiv.appendChild(btnLogin);
+authContainer.appendChild(authButtonsDiv);
+
+/* =========================
+   AUTH: Crear / Login / Logout / Session
+   ========================= */
+btnCreate.addEventListener('click', async () => {
+  const email = emailInput.value.trim();
+  const pass = passInput.value.trim();
+  if (!email || !pass) { welcomeFeedback.innerText = 'Completa correo y contraseña.'; return; }
+  try {
+    await createUserWithEmailAndPassword(auth, email, pass);
+    welcomeFeedback.style.color = 'green';
+    welcomeFeedback.innerText = 'Cuenta creada. Inicia sesión.';
+  } catch (err) {
+    welcomeFeedback.style.color = 'red';
+    welcomeFeedback.innerText = 'Error: ' + err.message;
+  }
+});
+
+btnLogin.addEventListener('click', async () => {
+  const email = emailInput.value.trim();
+  const pass = passInput.value.trim();
+  if (!email || !pass) { welcomeFeedback.innerText = 'Completa correo y contraseña.'; return; }
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+    welcomeFeedback.innerText = '';
+  } catch (err) {
+    welcomeFeedback.style.color = 'red';
+    welcomeFeedback.innerText = 'Error al iniciar sesión: ' + err.message;
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  try {
+    await signOut(auth);
+    // onAuthStateChanged limpiará UI
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+/* Al cambiar de sesión */
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    // identificar rol
+    const role = (user.email === CREATOR_EMAIL) ? 'creator' : 'employee';
+    currentUser = { uid: user.uid, email: user.email, role };
+    // log de acceso en Firestore
+    try { await addAccessLogToFirestore(currentUser); } catch(e){ console.error('log access err', e); }
+    // mostrar menú
+    showOptionsMenu();
+  } else {
+    currentUser = null;
+    showLoginScreen();
+  }
+});
+
+/* =========================
+   Firestore Helpers
+   ========================= */
+async function addAccessLogToFirestore(user) {
+  try {
+    await addDoc(collection(db, 'access_logs'), {
+      uid: user.uid,
+      email: user.email,
+      role: user.role,
+      ts: serverTimestamp()
     });
+  } catch (err) {
+    console.error('Error guardando access_log:', err);
+  }
 }
 
-function clearLog() {
-    if (confirm("¿Estás seguro de que quieres ELIMINAR el registro de accesos en ESTE NAVEGADOR? Esta acción es irreversible.")) {
-        localStorage.removeItem(LOG_KEY);
-        loadLogList();
-    }
-}
-
-function exportLogToCSV() {
-    let log = [];
-    try {
-        log = JSON.parse(localStorage.getItem(LOG_KEY)) || [];
-    } catch (e) {
-        alert("Error al leer el registro local.");
-        return;
-    }
-
-    if (log.length === 0) {
-        alert("El registro está vacío. No hay nada para descargar.");
-        return;
-    }
-    
-    const headers = ["Fecha y Hora", "No. Empleado", "Nombre del Empleado", "Puesto", "Correctas", "Total Preguntas", "Calificacion (%)"];
-    
-    const csvRows = log.map(entry => {
-        const date = new Date(entry.time).toLocaleString('es-MX', {
-            year: 'numeric', month: '2-digit', day: '2-digit',
-            hour: '2-digit', minute: '2-digit', second: '2-digit'
-        }).replace(/,/g, ''); 
-        
-        const percentage = entry.total > 0 ? ((entry.score / entry.total) * 100).toFixed(2) : '0.00';
-
-        return [
-            `"${date}"`,
-            `"${entry.id}"`,
-            `"${entry.name.replace(/"/g, '""')}"`, 
-            `"${entry.puesto.replace(/"/g, '""')}"`,
-            `"${entry.score}"`,
-            `"${entry.total}"`,
-            `"${percentage}%"`
-        ].join(';'); 
+async function addResultToFirestore(user, result) {
+  // result: { correct, wrong, answered, totalQuestions }
+  try {
+    await addDoc(collection(db, 'results'), {
+      uid: user.uid,
+      email: user.email,
+      role: user.role,
+      correct: result.correct,
+      wrong: result.wrong,
+      answered: result.answered,
+      totalQuestions: result.totalQuestions,
+      ts: serverTimestamp()
     });
-    
-    const csvContent = [
-        headers.join(';'),
-        ...csvRows
-    ].join('\n');
+  } catch (err) {
+    console.error('Error guardando result:', err);
+  }
+}
 
-    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+/* =========================
+   UI: mostrar pantallas
+   ========================= */
+function showLoginScreen() {
+  document.getElementById('welcomeView').style.display = 'block';
+  document.getElementById('optionsMenu').style.display = 'none';
+  document.getElementById('creatorView').style.display = 'none';
+  document.getElementById('quizView').style.display = 'none';
+  welcomeFeedback.style.color = 'red';
+  welcomeFeedback.innerText = 'Inicia sesión o crea una cuenta para continuar.';
+  emailInput.value = '';
+  passInput.value = '';
+}
+
+function showOptionsMenu() {
+  document.getElementById('welcomeView').style.display = 'none';
+  document.getElementById('creatorView').style.display = 'none';
+  document.getElementById('quizView').style.display = 'none';
+  document.getElementById('optionsMenu').style.display = 'block';
+  const welcomeUserMsg = document.getElementById('welcomeUserMsg');
+  welcomeUserMsg.innerText = `¡Hola, ${currentUser.email.split('@')[0]}! ¿Qué deseas hacer?`;
+  // mostrar botón de creador si es admin
+  document.getElementById('panelCreatorBtn').style.display = (currentUser.role === 'creator') ? 'inline-block' : 'none';
+}
+
+/* show creator view */
+document.getElementById('panelCreatorBtn').addEventListener('click', async () => {
+  document.getElementById('welcomeView').style.display = 'none';
+  document.getElementById('quizView').style.display = 'none';
+  document.getElementById('creatorView').style.display = 'block';
+  await loadLogsFromFirestore();
+});
+
+/* volver al menú */
+document.getElementById('backToMenuBtn').addEventListener('click', () => {
+  document.getElementById('creatorView').style.display = 'none';
+  showOptionsMenu();
+});
+
+/* descargar CSV (logs + results) desde Firestore (consulta reciente) */
+document.getElementById('downloadLogBtn').addEventListener('click', async () => {
+  try {
+    // traer últimos 500 logs + últimos 500 resultados
+    const logsQ = query(collection(db, 'access_logs'), orderBy('ts', 'desc'), limit(500));
+    const resultsQ = query(collection(db, 'results'), orderBy('ts', 'desc'), limit(500));
+    const [logsSnap, resultsSnap] = await Promise.all([ getDocs(logsQ), getDocs(resultsQ) ]);
+    const logs = logsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const results = resultsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    // preparar CSV: combinaremos logs y results por filas separadas
+    const rows = [];
+    rows.push(['Tipo','Fecha','UID','Email','Rol','Correctas','Incorrectas','Contestadas','TotalPreguntas'].join(';'));
+    results.forEach(r => {
+      const date = r.ts && r.ts.toDate ? r.ts.toDate().toLocaleString('es-MX') : '';
+      rows.push(['RESULT', `"${date}"`, `"${r.uid}"`, `"${r.email}"`, `"${r.role}"`, `${r.correct}`, `${r.wrong}`, `${r.answered}`, `${r.totalQuestions}`].join(';'));
+    });
+    logs.forEach(l => {
+      const date = l.ts && l.ts.toDate ? l.ts.toDate().toLocaleString('es-MX') : '';
+      rows.push(['ACCESS', `"${date}"`, `"${l.uid}"`, `"${l.email}"`, `"${l.role}"`, '', '', '', ''].join(';'));
+    });
+
+    const csvContent = '\uFEFF' + rows.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', `Registro_MC_${new Date().toISOString().slice(0, 10)}.csv`);
-    
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `MC_logs_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
 
-function showQuizView() {
-    if (!currentEmployee) {
-        showLoginScreen();
-        return;
+  } catch (err) {
+    alert('Error al descargar registros: ' + err.message);
+  }
+});
+
+/* refresh logs button */
+document.getElementById('refreshLogsBtn').addEventListener('click', loadLogsFromFirestore);
+
+/* carga logs desde Firestore y pinta en UI */
+async function loadLogsFromFirestore() {
+  const list = document.getElementById('logList');
+  list.innerHTML = '<li>Cargando registros...</li>';
+  try {
+    // Traer últimos 200 items (mezclados: results + access)
+    const resultsQ = query(collection(db, 'results'), orderBy('ts', 'desc'), limit(200));
+    const logsQ = query(collection(db, 'access_logs'), orderBy('ts', 'desc'), limit(200));
+    const [resSnap, logSnap] = await Promise.all([ getDocs(resultsQ), getDocs(logsQ) ]);
+
+    const rows = [];
+
+    resSnap.forEach(d => {
+      const r = d.data();
+      rows.push({
+        type: 'RESULT',
+        ts: r.ts,
+        uid: r.uid,
+        email: r.email,
+        role: r.role,
+        text: `Result: ${r.correct}/${r.totalQuestions} (resp: ${r.answered})`
+      });
+    });
+    logSnap.forEach(d => {
+      const r = d.data();
+      rows.push({
+        type: 'ACCESS',
+        ts: r.ts,
+        uid: r.uid,
+        email: r.email,
+        role: r.role,
+        text: 'Access'
+      });
+    });
+
+    // ordenar por ts descendente (usando toMillis si existe)
+    rows.sort((a,b) => {
+      const ta = a.ts && a.ts.toMillis ? a.ts.toMillis() : 0;
+      const tb = b.ts && b.ts.toMillis ? b.ts.toMillis() : 0;
+      return tb - ta;
+    });
+
+    list.innerHTML = '';
+    if (rows.length === 0) {
+      list.innerHTML = '<li>No se han encontrado registros.</li>';
+      return;
     }
 
-    document.getElementById('welcomeView').style.display = 'none';
-    document.getElementById('creatorView').style.display = 'none';
-    document.getElementById('quizView').style.display = 'block';
-    
-    document.getElementById('currentUserName').innerText = 
-        `Bienvenido(a), ${currentEmployee.nombre_del_empleado} - ${currentEmployee.puesto} | Empleado #${currentEmployee.no_empleado}`;
+    rows.forEach(entry => {
+      const li = document.createElement('li');
+      const date = entry.ts && entry.ts.toDate ? entry.ts.toDate().toLocaleString('es-MX') : '';
+      li.innerHTML = `
+        <div style="width:100%;">
+          <span class="log-name">${entry.email} ${entry.type === 'RESULT' ? '' : ''}</span>
+          <div class="log-puesto">${entry.role}</div>
+        </div>
+        <span class="log-time">${date}</span>
+        <span class="log-score">${entry.type === 'RESULT' ? entry.text : entry.text}</span>
+      `;
+      list.appendChild(li);
+    });
 
-    resetQuizState();
+  } catch (err) {
+    console.error(err);
+    list.innerHTML = '<li>Error al cargar registros.</li>';
+  }
 }
 
+/* =========================
+   QUIZ: lógica principal (igual que antes, con guardado en Firestore)
+   ========================= */
 
-// --- LÓGICA DEL QUIZ (Sin cambios funcionales) ---
+/* cargar preguntas */
+async function loadQuizData() {
+  quizData = await processCSV(QUIZ_CSV_URL);
+  if (quizData.length > 0) {
+    document.getElementById('welcomeFeedback').style.color = 'green';
+    document.getElementById('welcomeFeedback').innerText = 'Preguntas cargadas. Listo.';
+  } else {
+    document.getElementById('welcomeFeedback').style.color = 'red';
+    document.getElementById('welcomeFeedback').innerText = 'Error cargando preguntas (revisa CSV).';
+  }
+}
 
+/* botón iniciar quiz desde menú */
+document.getElementById('startQuizBtn').addEventListener('click', () => {
+  if (!currentUser) { showLoginScreen(); return; }
+  document.getElementById('welcomeView').style.display = 'none';
+  document.getElementById('creatorView').style.display = 'none';
+  document.getElementById('quizView').style.display = 'block';
+  document.getElementById('currentUserName').innerText = `Bienvenido(a), ${currentUser.email.split('@')[0]} | ${currentUser.role}`;
+  resetQuizState();
+}
+
+);
+
+/* reset quiz */
 function resetQuizState() {
   randomized = shuffle(quizData);
   currentIndex = 0;
@@ -589,11 +641,12 @@ function resetQuizState() {
   document.getElementById('progress').innerText = '';
 }
 
+/* mostrar pregunta actual */
 function showCurrent() {
   if (currentIndex >= randomized.length) return showResults();
   const item = randomized[currentIndex];
-  document.getElementById('section').innerText = item.section;
-  document.getElementById('question').innerText = item.question;
+  document.getElementById('section').innerText = item.section || 'Sin sección';
+  document.getElementById('question').innerText = item.question || 'Sin pregunta';
   document.getElementById('sourceLine').innerText = item.source ? `Fuente: ${item.source}` : '';
   document.getElementById('userAnswer').value = '';
   document.getElementById('userAnswer').style.display = 'block';
@@ -604,11 +657,13 @@ function showCurrent() {
   updateProgress();
 }
 
+/* actualizar progreso (UI) */
 function updateProgress() {
   document.getElementById('progress').innerText =
     `Pregunta ${currentIndex + 1} de ${randomized.length} | ✅ ${correctCount} correctas | ❌ ${wrongCount} incorrectas`;
 }
 
+/* comprobar respuesta */
 function checkAnswer() {
   const item = randomized[currentIndex];
   const user = document.getElementById('userAnswer').value;
@@ -618,32 +673,40 @@ function checkAnswer() {
   if (ok) {
     correctCount++;
     fb.className = 'feedback correct';
-    fb.innerText = `✅ Correcto.\nRespuesta: ${item.answer}\nFuente: ${item.source || 'Sin fuente'}`;
+    fb.innerText = `✅ Correcto.\nFuente: ${item.source || 'Sin fuente'}`;
   } else {
     wrongCount++;
     fb.className = 'feedback incorrect';
-    fb.innerText = `❌ Incorrecto.\nRespuesta Correcta: ${item.answer}\nFuente: ${item.source || 'Sin fuente'}`;
+    fb.innerText = `❌ Incorrecto.\nRespuesta esperada: ${item.answer}\nFuente: ${item.source || 'Sin fuente'}`;
   }
   document.getElementById('checkBtn').style.display = 'none';
   document.getElementById('nextBtn').style.display = 'inline-block';
   updateProgress();
 }
 
-function showResults() {
+/* mostrar resultados y guardar en Firestore */
+async function showResults() {
   const totalQuestions = randomized.length;
   const totalAnswered = correctCount + wrongCount;
-  const percentage = correctCount / totalQuestions;
-  
-  if(currentEmployee) {
-      logAccess(currentEmployee, correctCount, totalQuestions);
+  // Guardar resultado en Firestore para el usuario actual
+  if (currentUser) {
+    try {
+      await addResultToFirestore(currentUser, {
+        correct: correctCount,
+        wrong: wrongCount,
+        answered: totalAnswered,
+        totalQuestions
+      });
+    } catch (err) {
+      console.error('No se pudo guardar resultado:', err);
+    }
   }
 
+  const pct = totalQuestions ? (correctCount / totalQuestions) : 0;
   const comment =
-    percentage >= 0.9
-      ? "¡Excelente trabajo! Eres un experto 🍟"
-      : percentage >= 0.7
-      ? "¡Muy bien! Solo unos detalles por pulir 👏"
-      : "Sigue practicando, vas por buen camino 💪";
+    pct >= 0.9 ? "¡Excelente trabajo! Eres un experto 🍟" :
+    pct >= 0.7 ? "¡Muy bien! Solo unos detalles por pulir 👏" :
+    "Sigue practicando, vas por buen camino 💪";
 
   document.getElementById('section').innerText = "Resumen final";
   document.getElementById('question').innerText =
@@ -658,36 +721,9 @@ function showResults() {
   document.getElementById('progress').innerText = `Tu calificación final: ${correctCount} de ${totalQuestions}.`;
 }
 
-
-// --- EVENT LISTENERS ---
-
-document.getElementById('accessBtn').addEventListener('click', handleAccess);
-
-document.getElementById('employeeNumber').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') handleAccess();
-});
-document.getElementById('creatorPassword').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') handleAccess();
-});
-
-document.getElementById('employeeNumber').addEventListener('input', checkCreatorId);
-
-// Nuevos eventos del Menú de Opciones
-document.getElementById('startQuizBtn').addEventListener('click', showQuizView);
-document.getElementById('panelCreatorBtn').addEventListener('click', showCreatorView);
-document.getElementById('logoutBtn').addEventListener('click', showLoginScreen); // Nuevo botón para desloguearse
-
-// Evento para volver al menú desde el Panel de Creador
-document.getElementById('backToMenuBtn').addEventListener('click', () => {
-    document.getElementById('creatorView').style.display = 'none';
-    showOptionsMenu(currentEmployee && currentEmployee.no_empleado === CREATOR_ID);
-});
-
-
-document.getElementById('clearLogBtn').addEventListener('click', clearLog);
-document.getElementById('downloadLogBtn').addEventListener('click', exportLogToCSV); 
-
-// Eventos del Quiz
+/* =========================
+   EVENTOS UI (botones del quiz)
+   ========================= */
 document.getElementById('startBtn').addEventListener('click', () => {
   randomized = shuffle(quizData);
   currentIndex = 0;
@@ -716,8 +752,11 @@ document.getElementById('finishBtn').addEventListener('click', () => {
 
 document.getElementById('restartBtn').addEventListener('click', resetQuizState);
 
-// --- INICIO ---
-loadData();
+/* =========================
+   INICIALIZACIÓN
+   ========================= */
+await loadQuizData(); // carga preguntas al iniciar
+
 </script>
 </body>
 </html>
