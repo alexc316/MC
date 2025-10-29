@@ -29,7 +29,7 @@
 <body>
 
 <header>
-  <img src="https://th.bing.com/th/id/R.466663e3e2b9cdbe29c5d4e0721ea9b7?rik=y%2b93vLaQvfidzg&riu=http%3a%2f%2fpngimg.com%2fuploads%2fmcdonalds%2fmcdonalds_PNG9.png" alt="Logo" />
+  <img src="https://toppng.com/uploads/preview/mcdonalds-logo-png-transparent-images-116588728237pgflicdmm.png" alt="Logo" />
   <h1>Guía de estudio a entrenador MC</h1>
 </header>
 
@@ -274,54 +274,53 @@ function isSimilar(a, b) {
    - else try direct call to GenAI endpoint (may require API key)
    Returns: "correct" or "incorrect" (string)
    ==================================================== */
+  
 async function evaluateWithGemini(userAnswer, correctAnswer, questionText) {
   try {
+    // Prevalidación local antes de llamar a Gemini
+    if (isSimilar(userAnswer, correctAnswer)) return "correct";
+
     if (GEMINI_USE_PROXY) {
-      // Proxy expected to return {result: "correct" | "incorrect"}
       const res = await fetch(GEMINI_PROXY_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userAnswer, correctAnswer, question: questionText })
       });
       const j = await res.json();
-      return j && j.result ? j.result : "incorrect";
+      if (j && j.result) return j.result;
+      return "incorrect";
     } else {
-      // Direct call to Generative API (warning: exposing API key in client)
-      // Example endpoint: v1beta/models/<model>:generateText (may change)
-      // We'll use generateText style body (best-effort). If it errors, fallback to "incorrect".
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(GEMINI_MODEL)}:generateText?key=${encodeURIComponent(GEMINI_API_KEY)}`;
-      const prompt = `Evalúa si la respuesta del usuario significa lo mismo que la respuesta correcta.\nPregunta: "${questionText}"\nRespuesta esperada: "${correctAnswer}"\nRespuesta del usuario: "${userAnswer}"\nResponde solo con una palabra: "correct" si el significado es equivalente, o "incorrect" si no lo es.`;
+      const prompt = `
+Evalúa si la respuesta del usuario tiene el mismo significado o idea que la respuesta correcta.
+Pregunta: "${questionText}"
+Respuesta esperada: "${correctAnswer}"
+Respuesta del usuario: "${userAnswer}"
+Analiza si son equivalentes (aunque usen sinónimos o abreviaciones como "min" o "minutos").
+Responde solo con una palabra: "correct" o "incorrect".
+      `.trim();
+
       const body = {
-        temperature: 0.0,
-        maxOutputTokens: 64,
-        prompt: { text: prompt }
+        contents: [{ role: "user", parts: [{ text: prompt }] }]
       };
+
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
       });
+
       const j = await res.json();
-      // Attempt to parse the text response safely
-      let text = "";
-      if (j && (j.candidates || j.output)) {
-        // different API shapes:
-        if (j.candidates && j.candidates[0] && j.candidates[0].content) text = j.candidates[0].content;
-        else if (j.output && j.output[0] && j.output[0].content) text = j.output[0].content;
-        else text = JSON.stringify(j);
-      } else {
-        text = JSON.stringify(j);
-      }
-      text = String(text).toLowerCase();
+      const text = JSON.stringify(j).toLowerCase();
       if (text.includes("correct")) return "correct";
       if (text.includes("incorrect")) return "incorrect";
-      // fallback: if the model expresses high similarity words, accept as correct
-      if (text.includes("sí") || text.includes("si") || text.includes("equivalen") || text.includes("similar")) return "correct";
-      return "incorrect";
+
+      // Si Gemini no responde claro, intentar verificar localmente otra vez
+      return isSimilar(userAnswer, correctAnswer) ? "correct" : "incorrect";
     }
   } catch (e) {
     console.error("Gemini eval error:", e);
-    return "incorrect";
+    return "error";
   }
 }
 
@@ -705,7 +704,7 @@ async function initApp() {
   document.getElementById('feedbackMsg').innerText = "Cargando datos del quiz...";
   quizData = await processCSV(QUIZ_CSV_URL);
   if (quizData.length>0) {
-    document.getElementById('feedbackMsg').innerText = "Datos cargados. Inicia sesión para comenzar. 🚀";
+    document.getElementById('feedbackMsg').innerText = "Datos cargados. Inicia sesión para comenzar.";
     document.getElementById('loginBtn').disabled = false;
     document.getElementById('showCreateBtn').disabled = false;
   } else {
@@ -734,3 +733,4 @@ initApp();
 </script>
 </body>
 </html>
+
